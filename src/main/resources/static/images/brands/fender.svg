@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+  <rect width="240" height="80" rx="12" fill="#ffffff"/>
+  <path d="M35 55C32 40 45 25 60 25C70 25 78 30 75 42C72 52 58 55 48 55C42 55 38 52 35 48M42 38C52 38 68 36 68 30C68 26 62 26 55 28C45 31 38 45 42 38Z" fill="#e11d48"/>
+  <text x="85" y="52" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="34" font-style="italic" fill="#0f172a">Fender</text>
+</svg>

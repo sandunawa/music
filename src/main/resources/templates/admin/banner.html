@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head('Banner Manager | Admin Panel')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main style="background-color: #f8fafc; min-height: calc(100vh - 64px); padding-bottom: 3rem;">
+        <div class="container" style="max-width: 900px; margin: 0 auto; padding: 2rem 1rem;">
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+                <div>
+                    <h1 style="font-size: 2rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem; letter-spacing: -0.5px;">
+                        <span class="material-symbols-outlined" style="vertical-align: middle; color: #4f46e5; font-size: 2.2rem;">campaign</span> 
+                        Welcome Banner Manager
+                    </h1>
+                    <p style="color: #64748b; font-size: 0.95rem; margin-top: 0.2rem;">Configure the promotional pop-up banner that greets visitors upon arrival.</p>
+                </div>
+                <a th:href="@{/admin/dashboard}" class="btn" style="background: white; color: #475569; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.6rem 1rem; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s;">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_back</span> Dashboard
+                </a>
+            </div>
+
+            <div th:if="${param.saved}" class="alert alert-success" style="padding: 1rem 1.5rem; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; border-radius: 16px; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);">
+                <span class="material-symbols-outlined" style="color: #10b981;">check_circle</span>
+                <span style="font-weight: 500;">Banner settings have been updated and are now live!</span>
+            </div>
+
+            <form th:action="@{/admin/banner/update}" method="post" style="display: grid; gap: 2rem;">
+                
+                <!-- Status Card -->
+                <div class="settings-card" style="background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.03), 0 4px 6px -4px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.4rem;">
+                                <span class="material-symbols-outlined" style="color: #6366f1; font-size: 1.2rem;">toggle_on</span> Banner Visibility
+                            </h3>
+                            <p style="font-size: 0.85rem; color: #64748b; margin: 0;">Enable or disable the pop-up modal across the entire website.</p>
+                        </div>
+                        <label class="switch" style="position: relative; display: inline-block; width: 56px; height: 30px;">
+                            <input type="checkbox" name="enabled" value="true" th:checked="${bannerConfig.enabled}" style="opacity: 0; width: 0; height: 0;">
+                            <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Content Settings -->
+                <div class="settings-card" style="background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.03), 0 4px 6px -4px rgba(0,0,0,0.03);">
+                    <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 0.4rem;">
+                        <span class="material-symbols-outlined" style="color: #6366f1; font-size: 1.2rem;">edit_note</span> Content Details
+                    </h3>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div class="form-group">
+                            <label class="custom-label">Top Badge Text</label>
+                            <input type="text" name="badgeText" th:value="${bannerConfig.badgeText}" class="custom-input" placeholder="e.g. 🎁 SPECIAL WELCOME OFFER" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="custom-label">Main Title</label>
+                            <input type="text" name="title" th:value="${bannerConfig.title}" class="custom-input" placeholder="e.g. Get 15% OFF + Free Delivery!" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label class="custom-label">Subtitle / Description</label>
+                        <textarea name="subtitle" th:text="${bannerConfig.subtitle}" class="custom-input" rows="2" placeholder="e.g. Welcome to MelodyMart..." required style="resize: vertical;"></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label class="custom-label">Promo Code</label>
+                            <div style="position: relative;">
+                                <span class="material-symbols-outlined" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.1rem;">local_offer</span>
+                                <input type="text" name="couponCode" th:value="${bannerConfig.couponCode}" class="custom-input" placeholder="e.g. MELODY15" required style="padding-left: 2.5rem;" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="custom-label">Button Text</label>
+                            <input type="text" name="buttonText" th:value="${bannerConfig.buttonText}" class="custom-input" placeholder="e.g. Shop Now" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="custom-label">Button Target Link</label>
+                            <input type="text" name="buttonLink" th:value="${bannerConfig.buttonLink}" class="custom-input" placeholder="e.g. /catalog" required />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media Settings -->
+                <div class="settings-card" style="background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.03), 0 4px 6px -4px rgba(0,0,0,0.03);">
+                    <h3 style="font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 0.4rem;">
+                        <span class="material-symbols-outlined" style="color: #6366f1; font-size: 1.2rem;">image</span> Media Settings
+                    </h3>
+                    
+                    <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 2rem; align-items: start;">
+                        <div>
+                            <label class="custom-label">Banner Image URL <span style="font-weight: 400; color: #94a3b8; font-size: 0.75rem;">(Optional)</span></label>
+                            <div style="position: relative;">
+                                <span class="material-symbols-outlined" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1.1rem;">link</span>
+                                <input type="url" id="imageUrlInput" name="imageUrl" th:value="${bannerConfig.imageUrl}" class="custom-input" placeholder="https://..." style="padding-left: 2.5rem;" oninput="updateImagePreview(this.value)" />
+                            </div>
+                            <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.5rem; line-height: 1.4;">Paste a direct URL to an image. We recommend using a high-resolution, vertical (portrait) image for best results.</p>
+                        </div>
+                        
+                        <div id="imagePreviewContainer" style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px; padding: 1rem; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 140px; transition: all 0.3s;">
+                            <p style="font-size: 0.8rem; color: #64748b; font-weight: 500; margin-bottom: 0.5rem;">Live Preview</p>
+                            <img id="imagePreview" th:src="${bannerConfig.imageUrl}" alt="Preview" style="max-height: 160px; max-width: 100%; border-radius: 8px; object-fit: cover; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" onerror="this.style.display='none'" onload="this.style.display='inline-block'" />
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button type="submit" class="save-btn" style="padding: 0.8rem 2.5rem; border-radius: 50px; font-weight: 700; font-size: 1rem; background: linear-gradient(135deg, #4f46e5, #3b82f6); color: white; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3), 0 4px 6px -4px rgba(79, 70, 229, 0.3); transition: all 0.3s ease;">
+                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">save</span> Save Changes
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+
+    <style>
+        .custom-label {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 0.4rem;
+            display: block;
+            font-size: 0.88rem;
+        }
+        .custom-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: #0f172a;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+        }
+        .custom-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -3px rgba(79, 70, 229, 0.4), 0 4px 6px -4px rgba(79, 70, 229, 0.4);
+        }
+        .switch input:checked + .slider { background-color: #10b981; }
+        .switch input:checked + .slider:before { transform: translateX(26px); }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    </style>
+
+    <script>
+        function updateImagePreview(url) {
+            var img = document.getElementById('imagePreview');
+            var container = document.getElementById('imagePreviewContainer');
+            if (img) {
+                if (url && url.trim() !== '') {
+                    img.src = url;
+                    img.style.display = 'inline-block';
+                    container.style.border = '1px solid #e2e8f0';
+                } else {
+                    img.style.display = 'none';
+                    container.style.border = '2px dashed #cbd5e1';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

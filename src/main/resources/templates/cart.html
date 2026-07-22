@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head('MelodyMart | Shopping Cart')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div class="section-header">
+            <h1 class="section-title">Your Shopping Cart</h1>
+        </div>
+
+        <!-- Empty Cart State -->
+        <div class="empty-state" th:if="${cartItems.isEmpty()}">
+            <span class="material-symbols-outlined empty-icon">shopping_cart_off</span>
+            <h2>Your Shopping Cart is Empty</h2>
+            <p style="color: var(--text-secondary); margin: 0.5rem 0 1.5rem 0;">Browse our musical instruments and add items to your cart.</p>
+            <a th:href="@{/catalog}" class="btn btn-primary">
+                <span class="material-symbols-outlined">explore</span> Start Shopping
+            </a>
+        </div>
+
+        <!-- Populated Cart Layout -->
+        <div class="cart-layout" th:if="${!cartItems.isEmpty()}">
+            <!-- Left: Table list -->
+            <div class="table-wrapper">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Instrument</th>
+                            <th>Unit Price</th>
+                            <th style="text-align: center;">Quantity</th>
+                            <th>Subtotal</th>
+                            <th style="width: 50px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${cartItems}">
+                            <td>
+                                <div class="cart-item-title" th:text="${item.productName}">Instrument Title</div>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);" th:text="'ID: ' + ${item.productId}">ID</span>
+                            </td>
+                            <td th:text="'$' + ${item.price}">$0.00</td>
+                            <td style="text-align: center;">
+                                <input type="number" 
+                                       th:value="${item.quantity}" 
+                                       min="1" 
+                                       class="form-control cart-qty-input"
+                                       th:onchange="updateCartQuantity([[${item.productId}]], this)">
+                            </td>
+                            <td th:id="'subtotal-' + ${item.productId}" th:text="'$' + ${item.getSubtotal()}">$0.00</td>
+                            <td>
+                                <button type="button" 
+                                        style="background: none; border: none; color: var(--color-danger); cursor: pointer;" 
+                                        th:onclick="removeCartItem([[${item.productId}]], this.closest('tr'))">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25rem;">delete</span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Right: Checkout summaries panel -->
+            <div class="cart-summary">
+                <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                    Order Summary
+                </h3>
+                
+                <div class="summary-row">
+                    <span style="color: var(--text-secondary);">Subtotal</span>
+                    <span id="cart-subtotal" th:text="'$' + ${subtotal}">$0.00</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span style="color: var(--text-secondary);">Sales Tax (10% VAT)</span>
+                    <span id="cart-tax" th:text="'$' + ${tax}">$0.00</span>
+                </div>
+                
+                <div class="summary-row total">
+                    <span>Est. Total</span>
+                    <span id="cart-total" style="color: var(--accent-cyan);" th:text="'$' + ${total}">$0.00</span>
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <a th:href="@{/checkout}" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-sm); padding: 0.75rem;">
+                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">credit_card</span> Proceed to Checkout
+                    </a>
+                    
+                    <a th:href="@{/catalog}" class="btn btn-secondary" style="width: 100%; border-radius: var(--radius-sm); padding: 0.75rem; text-align: center;">
+                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">arrow_back</span> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

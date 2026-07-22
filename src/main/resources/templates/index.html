@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head('MelodyMart | Premium Music Store &amp; Rentals')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main style="padding:0;max-width:100%;">
+
+        <!-- ═══ HERO CAROUSEL BANNER ═══ -->
+        <section class="hero-carousel">
+            <div class="carousel-track" id="carouselTrack">
+                
+                <!-- SLIDE 1: New Arrivals -->
+                <div class="carousel-slide slide-1" th:style="'background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.5) 100%), url(' + @{/images/banners/guitar_banner.png} + ');'">
+                    <div class="slide-content">
+                        <span class="slide-badge">&#10024; New Arrivals</span>
+                        <h1 class="slide-title">Discover the Latest<br>Guitar Collection</h1>
+                        <p class="slide-desc">Freshly stocked premium guitars from the world's finest luthiers. Elevate your sound with instruments built for perfection.</p>
+                        <div class="slide-actions">
+                            <a th:href="@{/catalog/buy}" class="btn-slide-primary">Shop New Arrivals</a>
+                            <a th:href="@{/catalog/rent}" class="btn-slide-secondary">Rent Instead</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 2: Weekly Deals -->
+                <div class="carousel-slide slide-2" th:style="'background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.55) 100%), url(' + @{/images/banners/piano_banner.png} + ');'">
+                    <div class="slide-content">
+                        <span class="slide-badge" style="background:rgba(245,158,11,.3);color:#fef08a;border-color:#f59e0b;">&#128293; This Week Only</span>
+                        <h1 class="slide-title">Up to 20% Off<br>on Select Instruments</h1>
+                        <p class="slide-desc">Limited-time deals on keyboards, drums, and studio audio. Don't miss out on the best prices of the season.</p>
+                        <div class="slide-actions">
+                            <a th:href="@{/catalog/buy}" class="btn-slide-primary" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">Grab the Deals</a>
+                            <a th:href="@{/catalog}" class="btn-slide-secondary">Browse All</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 3: Rent & Play -->
+                <div class="carousel-slide slide-3" th:style="'background-image: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.55) 100%), url(' + @{/images/banners/studio_banner.png} + ');'">
+                    <div class="slide-content">
+                        <span class="slide-badge" style="background:rgba(16,185,129,.3);color:#a7f3d0;border-color:#10b981;">&#127925; Rent &amp; Play</span>
+                        <h1 class="slide-title">Rent Your Dream<br>Instrument Today</h1>
+                        <p class="slide-desc">Try before you buy. Flexible rental plans from just $5/day. Perfect for students, events, and studio sessions.</p>
+                        <div class="slide-actions">
+                            <a th:href="@{/catalog/rent}" class="btn-slide-primary" style="background:linear-gradient(135deg,#10b981,#06b6d4);">Start Renting</a>
+                            <a th:href="@{/register}" class="btn-slide-secondary" th:if="${session.currentUser == null}">Join Free</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <button class="carousel-btn prev" onclick="changeSlide(-1)"><span class="material-symbols-outlined">chevron_left</span></button>
+            <button class="carousel-btn next" onclick="changeSlide(1)"><span class="material-symbols-outlined">chevron_right</span></button>
+            <div class="carousel-dots">
+                <button class="dot active" onclick="goToSlide(0)"></button>
+                <button class="dot" onclick="goToSlide(1)"></button>
+                <button class="dot" onclick="goToSlide(2)"></button>
+            </div>
+        </section>
+
+        <div class="page-content">
+
+        <!-- ═══ VALUE PROPOSITIONS ═══ -->
+        <section class="value-props">
+            <div class="value-grid">
+                <div class="value-card">
+                    <div class="value-icon-wrap" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);">
+                        <span class="material-symbols-outlined" style="color:#2563eb;">local_shipping</span>
+                    </div>
+                    <div><h4 class="value-title">Free &amp; Fast Delivery</h4><p class="value-desc">Free shipping on orders above $50. Express delivery available island-wide.</p></div>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon-wrap" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);">
+                        <span class="material-symbols-outlined" style="color:#16a34a;">lock</span>
+                    </div>
+                    <div><h4 class="value-title">100% Secure Payments</h4><p class="value-desc">Your transactions are encrypted and protected end-to-end.</p></div>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon-wrap" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">
+                        <span class="material-symbols-outlined" style="color:#d97706;">workspace_premium</span>
+                    </div>
+                    <div><h4 class="value-title">Top Quality Brands</h4><p class="value-desc">Authentic instruments from the world's leading brands only.</p></div>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon-wrap" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);">
+                        <span class="material-symbols-outlined" style="color:#db2777;">support_agent</span>
+                    </div>
+                    <div><h4 class="value-title">24/7 Customer Support</h4><p class="value-desc">Expert music advisors available around the clock to help you.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ SPIN & WIN DISCOUNT WHEEL SECTION ═══ -->
+        <section class="spin-wheel-section" style="margin: 3rem 0; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); border-radius: 24px; padding: 2.5rem 2rem; color: white; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.3); overflow: hidden; position: relative;">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(99, 102, 241, 0.15); border-radius: 50%; filter: blur(40px); pointer-events: none;"></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;" class="spin-grid">
+                <!-- Left Column: Info & Button -->
+                <div>
+                    <div style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.35rem 0.9rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; color: #fbbf24; margin-bottom: 1rem;">
+                        <span class="material-symbols-outlined" style="font-size: 1rem;">casino</span> SPIN &amp; WIN DISCOUNT
+                    </div>
+                    <h2 style="font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 0.75rem; letter-spacing: -0.5px; color: #ffffff;">
+                        Spin the Wheel &amp;<br><span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Win Exclusive Deals!</span>
+                    </h2>
+                    <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; max-width: 450px;">
+                        Try your luck once per customer to unlock an instant discount code valid for your next instrument purchase or rental checkout!
+                    </p>
+
+                    <!-- Already Spun / Result Box -->
+                    <div id="spinResultBox" style="display: none; background: rgba(255, 255, 255, 0.1); border: 1px dashed rgba(251, 191, 36, 0.5); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; align-items: center; gap: 1rem;">
+                        <span class="material-symbols-outlined" style="font-size: 2.5rem; color: #fbbf24;">workspace_premium</span>
+                        <div>
+                            <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: #cbd5e1; font-weight: 600;">YOUR ACTIVE DISCOUNT:</div>
+                            <div id="wonDiscountText" style="font-size: 1.6rem; font-weight: 800; color: #fbbf24;">20% OFF</div>
+                            <div style="font-size: 0.85rem; color: #e2e8f0; margin-top: 0.2rem;">
+                                Coupon Code: <strong id="wonCodeText" style="background: rgba(255, 255, 255, 0.2); padding: 0.15rem 0.5rem; border-radius: 6px; font-family: monospace; letter-spacing: 1px;">SPIN20</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                        <button id="spinBtn" onclick="spinWheel()" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #0f172a; border: none; padding: 0.85rem 2rem; border-radius: 50px; font-weight: 800; font-size: 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); transition: all 0.3s ease;">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">rotate_right</span> SPIN THE WHEEL
+                        </button>
+                        <a th:href="@{/checkout}" id="shopWithDiscountBtn" style="display: none; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 0.85rem 2rem; border-radius: 50px; font-weight: 800; font-size: 1rem; cursor: pointer; text-decoration: none; align-items: center; gap: 0.5rem; box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">shopping_cart_checkout</span> Claim &amp; Checkout Now
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Right Column: Wheel Graphic -->
+                <div style="display: flex; justify-content: center; position: relative;">
+                    <div style="position: relative; width: 320px; height: 320px;">
+                        <!-- Pointer Arrow -->
+                        <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 26px solid #fbbf24; z-index: 10; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));"></div>
+                        
+                        <!-- Rotating Wheel Disc -->
+                        <div id="wheelDisc" style="width: 320px; height: 320px; border-radius: 50%; border: 6px solid #fbbf24; box-shadow: 0 0 30px rgba(251, 191, 36, 0.4), inset 0 0 20px rgba(0,0,0,0.5); overflow: hidden; background: #0f172a;">
+                            <canvas id="wheelCanvas" width="320" height="320"></canvas>
+                        </div>
+                        
+                        <!-- Center Hub Button -->
+                        <div onclick="spinWheel()" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; background: radial-gradient(circle, #ffffff, #e2e8f0); border: 4px solid #fbbf24; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.85rem; color: #0f172a; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.4); z-index: 5;">
+                            SPIN
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spin Win Modal -->
+        <div id="spinWinModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+            <div style="background: white; border-radius: 24px; max-width: 440px; width: 100%; padding: 2.5rem; text-align: center; position: relative; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                <button onclick="closeSpinModal()" style="position: absolute; top: 1rem; right: 1rem; background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: #64748b;">&times;</button>
+                <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🎉</div>
+                <h3 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem;">CONGRATULATIONS!</h3>
+                <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">You landed on an exclusive discount deal!</p>
+                
+                <div id="modalDiscountValue" style="font-size: 2.5rem; font-weight: 900; color: #4f46e5; margin-bottom: 1rem;">20% OFF</div>
+                
+                <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 14px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <span style="font-size: 0.78rem; color: #64748b; font-weight: 600; display: block; margin-bottom: 0.25rem;">COUPON CODE (APPLIED AUTOMATICALLY)</span>
+                    <strong id="modalCouponCode" style="font-size: 1.6rem; color: #0f172a; font-family: monospace; letter-spacing: 2px;">SPIN20</strong>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem;">
+                    <button onclick="copySpinModalCode()" style="flex: 1; padding: 0.75rem; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; border-radius: 50px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+                        <span class="material-symbols-outlined" style="font-size: 1rem;">content_copy</span> Copy
+                    </button>
+                    <a th:href="@{/checkout}" style="flex: 1; padding: 0.75rem; background: linear-gradient(135deg, #4f46e5, #0891b2); color: white; border: none; border-radius: 50px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 6px 16px rgba(79,70,229,0.3);">
+                        <span class="material-symbols-outlined" style="font-size: 1rem;">bolt</span> Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ CATEGORIES ═══ -->
+        <section class="home-section">
+            <div class="section-header">
+                <h2 class="section-title">Browse by Category</h2>
+                <a th:href="@{/catalog}" class="section-link">View All Categories <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;">arrow_forward</span></a>
+            </div>
+            <div class="category-grid">
+                <a th:each="cat : ${categories}" th:href="@{/catalog(category=${cat})}"
+                   class="category-card-modern"
+                   th:style="'background-image: url(' + ${cat.name() == 'GUITAR' ? 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600' :
+                              cat.name() == 'KEYBOARD' ? 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=600' :
+                              cat.name() == 'DRUMS' ? 'https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=600' :
+                              cat.name() == 'STUDIO_AUDIO' ? 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600' :
+                              cat.name() == 'BRASS_WOODWIND' ? 'https://images.unsplash.com/photo-1525994886773-080587e161c2?w=600' :
+                              'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600'} + ');'">
+                    <div class="category-card-overlay"></div>
+                    <div class="category-card-content">
+                        <span class="category-card-icon material-symbols-outlined"
+                              th:text="${cat.name() == 'GUITAR' ? 'music_video' :
+                                        cat.name() == 'KEYBOARD' ? 'piano' :
+                                        cat.name() == 'DRUMS' ? 'reorder' :
+                                        cat.name() == 'STUDIO_AUDIO' ? 'mic' :
+                                        cat.name() == 'BRASS_WOODWIND' ? 'filter_vintage' : 'headphones'}">album</span>
+                        <h3 class="category-card-title" th:text="${cat.displayName}">Category</h3>
+                        <span class="category-card-btn">Explore Gear <span class="material-symbols-outlined" style="font-size:0.9rem;vertical-align:middle;">arrow_forward</span></span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- ═══ PRODUCT TABS ═══ -->
+        <section class="home-section">
+            <div class="section-header"><h2 class="section-title">Instruments for You</h2></div>
+            <div class="product-tabs">
+                <button class="product-tab-btn active" onclick="switchProductTab('topRated',this)">
+                    <span class="material-symbols-outlined">star</span> Top Rated
+                </button>
+                <button class="product-tab-btn" onclick="switchProductTab('newArrivals',this)">
+                    <span class="material-symbols-outlined">new_releases</span> New Arrivals
+                </button>
+                <button class="product-tab-btn" onclick="switchProductTab('bestRentals',this)">
+                    <span class="material-symbols-outlined">key</span> Best Rentals
+                </button>
+            </div>
+
+            <div id="panel-topRated" class="product-tab-panel active">
+                <div class="product-grid" th:if="${!#lists.isEmpty(topRated)}">
+                    <div class="product-card" th:each="product : ${topRated}">
+                        <div class="product-img-wrapper">
+                            <img th:src="${product.imageUrl}" th:alt="${product.name}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600'">
+                            <span class="product-badge" th:if="${product.stockQuantity > 0}" th:text="'Stock: ' + ${product.stockQuantity}">In Stock</span>
+                            <span class="product-badge out" th:if="${product.stockQuantity == 0}">Out of Stock</span>
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand" th:text="${product.brand}">Brand</span>
+                            <a th:href="@{/product/{id}(id=${product.id})}" class="product-title" th:text="${product.name}">Name</a>
+                            <div class="product-prices">
+                                <div class="price-item"><span class="price-label">Price</span><span class="price-value" th:text="'$' + ${product.price}">$0</span></div>
+                                <div class="price-item"><span class="price-label">Rent/Day</span><span class="price-value rental" th:text="'$' + ${product.rentalPricePerDay}">$0</span></div>
+                            </div>
+                            <div class="card-actions">
+                                <a th:href="@{/product/{id}(id=${product.id})}" class="btn btn-secondary btn-card"><span class="material-symbols-outlined" style="font-size:1rem;">info</span> Details</a>
+                                <button class="btn btn-primary btn-card" th:if="${product.stockQuantity > 0}" th:onclick="addToCart([[${product.id}]])"><span class="material-symbols-outlined" style="font-size:1rem;">add_shopping_cart</span> Add to Cart</button>
+                                <button class="btn btn-secondary btn-card" style="opacity:.5;cursor:not-allowed;" th:if="${product.stockQuantity == 0}" disabled>Out of Stock</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty-tab" th:if="${#lists.isEmpty(topRated)}"><span class="material-symbols-outlined">sentiment_neutral</span><p>No products yet.</p></div>
+            </div>
+
+            <div id="panel-newArrivals" class="product-tab-panel">
+                <div class="product-grid" th:if="${!#lists.isEmpty(newArrivals)}">
+                    <div class="product-card" th:each="product : ${newArrivals}">
+                        <div class="product-img-wrapper">
+                            <img th:src="${product.imageUrl}" th:alt="${product.name}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600'">
+                            <span class="product-badge" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">New</span>
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand" th:text="${product.brand}">Brand</span>
+                            <a th:href="@{/product/{id}(id=${product.id})}" class="product-title" th:text="${product.name}">Name</a>
+                            <div class="product-prices">
+                                <div class="price-item"><span class="price-label">Price</span><span class="price-value" th:text="'$' + ${product.price}">$0</span></div>
+                                <div class="price-item"><span class="price-label">Rent/Day</span><span class="price-value rental" th:text="'$' + ${product.rentalPricePerDay}">$0</span></div>
+                            </div>
+                            <div class="card-actions">
+                                <a th:href="@{/product/{id}(id=${product.id})}" class="btn btn-secondary btn-card"><span class="material-symbols-outlined" style="font-size:1rem;">info</span> Details</a>
+                                <button class="btn btn-primary btn-card" th:if="${product.stockQuantity > 0}" th:onclick="addToCart([[${product.id}]])"><span class="material-symbols-outlined" style="font-size:1rem;">add_shopping_cart</span> Add to Cart</button>
+                                <button class="btn btn-secondary btn-card" style="opacity:.5;cursor:not-allowed;" th:if="${product.stockQuantity == 0}" disabled>Out of Stock</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty-tab" th:if="${#lists.isEmpty(newArrivals)}"><span class="material-symbols-outlined">sentiment_neutral</span><p>No new arrivals yet.</p></div>
+            </div>
+
+            <div id="panel-bestRentals" class="product-tab-panel">
+                <div class="product-grid" th:if="${!#lists.isEmpty(bestRentals)}">
+                    <div class="product-card" th:each="product : ${bestRentals}">
+                        <div class="product-img-wrapper">
+                            <img th:src="${product.imageUrl}" th:alt="${product.name}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600'">
+                            <span class="product-badge" style="background:linear-gradient(135deg,#10b981,#06b6d4);">Best Rental</span>
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand" th:text="${product.brand}">Brand</span>
+                            <a th:href="@{/product/{id}(id=${product.id})}" class="product-title" th:text="${product.name}">Name</a>
+                            <div class="product-prices">
+                                <div class="price-item"><span class="price-label">Rent/Day</span><span class="price-value rental" th:text="'$' + ${product.rentalPricePerDay}">$0</span></div>
+                                <div class="price-item"><span class="price-label">Buy Price</span><span class="price-value" th:text="'$' + ${product.price}">$0</span></div>
+                            </div>
+                            <div class="card-actions">
+                                <a th:href="@{/product/{id}(id=${product.id})}" class="btn btn-secondary btn-card"><span class="material-symbols-outlined" style="font-size:1rem;">info</span> Details</a>
+                                <a th:href="@{/product/{id}(id=${product.id})}" class="btn btn-primary btn-card" style="background:linear-gradient(135deg,#10b981,#06b6d4);"><span class="material-symbols-outlined" style="font-size:1rem;">key</span> Rent Now</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="empty-tab" th:if="${#lists.isEmpty(bestRentals)}"><span class="material-symbols-outlined">sentiment_neutral</span><p>No rentals available yet.</p></div>
+            </div>
+        </section>
+
+        </div><!-- end page-content -->
+
+        <!-- ═══ BRANDS MARQUEE ═══ -->
+        <section class="brands-section-premium">
+            <div class="brands-header">
+                <span class="brands-badge">
+                    <span class="material-symbols-outlined" style="font-size:1.1rem;color:#4f46e5;vertical-align:middle;">verified</span>
+                    OFFICIAL AUTHORIZED DEALER
+                </span>
+                <h3 class="brands-title">Trusted World-Class Instrument Brands</h3>
+            </div>
+
+            <div class="brands-track-wrapper">
+                <div class="brands-track">
+                    <!-- Set 1 -->
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/fender.svg}" alt="Fender" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Fender</span>
+                            <span class="brand-cat-p">Guitars &amp; Amps</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/yamaha.svg}" alt="Yamaha" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Yamaha</span>
+                            <span class="brand-cat-p">Pianos &amp; Audio</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/gibson.svg}" alt="Gibson" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Gibson</span>
+                            <span class="brand-cat-p">Electric Guitars</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/roland.svg}" alt="Roland" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Roland</span>
+                            <span class="brand-cat-p">Synthesizers &amp; Drums</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/casio.svg}" alt="Casio" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Casio</span>
+                            <span class="brand-cat-p">Digital Keyboards</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/pearl.svg}" alt="Pearl" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Pearl</span>
+                            <span class="brand-cat-p">Acoustic Drums</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/shure.svg}" alt="Shure" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Shure</span>
+                            <span class="brand-cat-p">Microphones</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/ibanez.svg}" alt="Ibanez" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Ibanez</span>
+                            <span class="brand-cat-p">Bass &amp; Guitars</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/korg.svg}" alt="Korg" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Korg</span>
+                            <span class="brand-cat-p">Music Workstations</span>
+                        </div>
+                    </div>
+
+                    <!-- Set 2 (Seamless Infinite Loop) -->
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/fender.svg}" alt="Fender" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Fender</span>
+                            <span class="brand-cat-p">Guitars &amp; Amps</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/yamaha.svg}" alt="Yamaha" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Yamaha</span>
+                            <span class="brand-cat-p">Pianos &amp; Audio</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/gibson.svg}" alt="Gibson" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Gibson</span>
+                            <span class="brand-cat-p">Electric Guitars</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/roland.svg}" alt="Roland" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Roland</span>
+                            <span class="brand-cat-p">Synthesizers &amp; Drums</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/casio.svg}" alt="Casio" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Casio</span>
+                            <span class="brand-cat-p">Digital Keyboards</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/pearl.svg}" alt="Pearl" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Pearl</span>
+                            <span class="brand-cat-p">Acoustic Drums</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/shure.svg}" alt="Shure" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Shure</span>
+                            <span class="brand-cat-p">Microphones</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/ibanez.svg}" alt="Ibanez" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Ibanez</span>
+                            <span class="brand-cat-p">Bass &amp; Guitars</span>
+                        </div>
+                    </div>
+                    <div class="brand-card-premium">
+                        <img th:src="@{/images/brands/korg.svg}" alt="Korg" class="brand-img-premium">
+                        <div class="brand-info">
+                            <span class="brand-name-p">Korg</span>
+                            <span class="brand-cat-p">Music Workstations</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="page-content">
+
+        <!-- ═══ CTA BANNER ═══ -->
+        <section class="cta-banner" th:if="${session.currentUser == null or session.currentUser.role.name() == 'ADMIN'}"
+                 th:style="'background-image: url(' + @{/images/banners/cta_bg.png} + '); background-size: cover; background-position: center;'">
+            <div class="cta-deco cta-deco-1"></div>
+            <div class="cta-deco cta-deco-2"></div>
+            <div class="cta-content">
+                <span class="cta-badge">&#127881; Limited Offer</span>
+                <div class="cta-text-backdrop">
+                    <h2 class="cta-title">Sign Up &amp; Save 10% on Your First Order</h2>
+                    <p class="cta-desc">Join thousands of musicians who trust MelodyMart. Create a free account today and receive an exclusive welcome discount.</p>
+                </div>
+                <div class="cta-actions">
+                    <a th:href="@{/register}" class="btn-cta-primary"><span class="material-symbols-outlined">person_add</span> Create Free Account</a>
+                    <a th:href="@{/catalog}" class="btn-cta-secondary">Browse First</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ TESTIMONIALS ═══ -->
+        <section class="home-section">
+            <div class="section-header" style="justify-content: center; text-align: center;"><h2 class="section-title">What Our Customers Say</h2></div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"MelodyMart had the exact Fender Stratocaster I was looking for at the best price. Fast delivery and arrived in perfect condition. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">A</div>
+                        <div><p class="testimonial-name">Ashan Perera</p><p class="testimonial-role">Professional Guitarist</p></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"The rental service is absolutely amazing. I needed a Roland keyboard for a 2-week event and the process was seamless. Will use again for future gigs!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#10b981,#06b6d4);">N</div>
+                        <div><p class="testimonial-name">Nimesha Silva</p><p class="testimonial-role">Music Teacher</p></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"As a music student I couldn't afford a full drum kit. Renting from MelodyMart for my exams was a lifesaver. Great customer support throughout!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">K</div>
+                        <div><p class="testimonial-name">Kasun Fernando</p><p class="testimonial-role">Music Student</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        </div><!-- end page-content 2 -->
+
+        <!-- ═══ WELCOME POPUP MODAL BANNER ═══ -->
+        <div id="welcomeModal" class="welcome-modal-overlay" th:if="${bannerConfig != null && bannerConfig.enabled}">
+            <div class="welcome-modal-card">
+                <button class="welcome-modal-close" onclick="closeWelcomeModal()">&times;</button>
+                
+                <!-- Optional Banner Photo -->
+                <div class="welcome-modal-img-wrap" th:if="${bannerConfig.imageUrl != null && !#strings.isEmpty(bannerConfig.imageUrl)}" style="margin: -2.2rem -2rem 1.25rem -2rem; overflow: hidden; border-radius: 24px 24px 0 0; max-height: 180px;">
+                    <img th:src="${bannerConfig.imageUrl}" alt="Banner Photo" style="width: 100%; height: 180px; object-fit: cover; display: block;" onerror="this.parentElement.style.display='none'">
+                </div>
+
+                <div class="welcome-modal-header">
+                    <span class="welcome-badge" th:text="${bannerConfig.badgeText}">🎁 SPECIAL WELCOME OFFER</span>
+                    <h3 class="welcome-title" th:text="${bannerConfig.title}">Get 15% OFF + Free Delivery!</h3>
+                    <p class="welcome-subtitle" th:text="${bannerConfig.subtitle}">Welcome to MelodyMart — Your destination for premium instruments &amp; rentals.</p>
+                </div>
+                <div class="welcome-modal-body" th:if="${bannerConfig.couponCode != null && !#strings.isEmpty(bannerConfig.couponCode)}">
+                    <p class="welcome-code-label">Click to copy your welcome code:</p>
+                    <div class="welcome-code-box" onclick="copyCouponCode()">
+                        <span id="couponCode" th:text="${bannerConfig.couponCode}">MELODY15</span>
+                        <span class="material-symbols-outlined copy-icon">content_copy</span>
+                    </div>
+                    <p id="copyToast" class="copy-toast">Copied code!</p>
+                </div>
+                <div class="welcome-modal-footer">
+                    <a th:href="${bannerConfig.buttonLink != null ? bannerConfig.buttonLink : '/catalog/buy'}" class="btn-welcome-action" onclick="closeWelcomeModal()" th:text="${bannerConfig.buttonText}">Explore Products &amp; Rent Now</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <footer th:replace="~{layout :: footer}"></footer>
+
+    <style>
+        main{padding-top:0!important;}
+        .hero-carousel{position:relative;overflow:hidden;}
+        .carousel-track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);}
+        .carousel-slide{min-width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 2rem;gap:1.5rem;min-height:460px;overflow:hidden;background-size:cover;background-position:center;color:#ffffff;}
+        .slide-content{max-width:720px;z-index:2;margin:0 auto;display:flex;flex-direction:column;align-items:center;}
+        .slide-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.18);color:#ffffff;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);border-radius:50px;padding:.4rem 1.1rem;font-size:.9rem;font-weight:700;margin-bottom:1rem;}
+        .slide-title{font-size:3.2rem;font-weight:900;line-height:1.15;color:#ffffff;margin-bottom:1rem;text-shadow:0 4px 20px rgba(0,0,0,.4);}
+        .slide-desc{font-size:1.1rem;color:rgba(255,255,255,.92);line-height:1.7;margin-bottom:2rem;max-width:640px;text-shadow:0 2px 10px rgba(0,0,0,.3);}
+        .slide-actions{display:flex;justify-content:center;align-items:center;gap:1.25rem;flex-wrap:wrap;}
+        .btn-slide-primary{background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;padding:.85rem 2.2rem;border-radius:50px;text-decoration:none;font-weight:800;font-size:1rem;box-shadow:0 6px 20px rgba(79,70,229,.4);transition:transform .2s,box-shadow .2s;}
+        .btn-slide-primary:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(79,70,229,.5);}
+        .btn-slide-secondary{background:rgba(255,255,255,.2);color:#fff;backdrop-filter:blur(8px);padding:.85rem 2.2rem;border-radius:50px;text-decoration:none;font-weight:700;font-size:1rem;border:1px solid rgba(255,255,255,.4);transition:background .2s,transform .2s;}
+        .btn-slide-secondary:hover{background:rgba(255,255,255,.35);transform:translateY(-3px);}
+        .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.9);border:1px solid #e2e8f0;border-radius:50%;width:46px;height:46px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);transition:box-shadow .2s;z-index:10;}
+        .carousel-btn:hover{box-shadow:0 4px 16px rgba(0,0,0,.18);}
+        .carousel-btn.prev{left:1.25rem;}
+        .carousel-btn.next{right:1.25rem;}
+        .carousel-dots{position:absolute;bottom:1.25rem;left:50%;transform:translateX(-50%);display:flex;gap:.5rem;z-index:10;}
+        .dot{width:8px;height:8px;border-radius:50%;background:rgba(71,85,105,.3);border:none;cursor:pointer;transition:background .3s,width .3s;padding:0;}
+        .dot.active{background:#4f46e5;width:24px;border-radius:4px;}
+        .page-content{padding:0 1.5rem;max-width:100%;margin:0;}
+        .value-props{padding:2.5rem 0;}
+        .value-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
+        .value-card{display:flex;align-items:flex-start;gap:1rem;padding:1.5rem;background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:box-shadow .2s,transform .2s;}
+        .value-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-3px);}
+        .value-icon-wrap{flex-shrink:0;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+        .value-icon-wrap .material-symbols-outlined{font-size:1.6rem;}
+        .value-title{font-size:.95rem;font-weight:700;color:#0f172a;margin-bottom:.3rem;}
+        .value-desc{font-size:.82rem;color:#64748b;line-height:1.5;}
+        .home-section{padding:2.5rem 0;}
+        .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;}
+        .section-title{font-size:1.6rem;font-weight:800;color:#0f172a;}
+        .section-link{font-size:.9rem;font-weight:600;color:#4f46e5;text-decoration:none;}
+
+        /* Modern Category Cards */
+        .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+        .category-card-modern{position:relative;height:220px;border-radius:20px;background-size:cover;background-position:center;overflow:hidden;text-decoration:none;box-shadow:0 4px 15px rgba(0,0,0,.08);transition:transform .35s cubic-bezier(.34,1.56,.64,1),box-shadow .35s ease;display:flex;align-items:flex-end;padding:1.5rem;}
+        .category-card-modern:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 15px 30px rgba(0,0,0,.18);}
+        .category-card-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(15,23,42,.15) 0%,rgba(15,23,42,.85) 100%);transition:background .3s ease;}
+        .category-card-modern:hover .category-card-overlay{background:linear-gradient(180deg,rgba(79,70,229,.2) 0%,rgba(15,23,42,.92) 100%);}
+        .category-card-content{position:relative;z-index:2;color:#fff;width:100%;}
+        .category-card-icon{font-size:2.2rem;color:#38bdf8;margin-bottom:.4rem;display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));}
+        .category-card-title{font-size:1.35rem;font-weight:800;margin-bottom:.5rem;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.4);}
+        .category-card-btn{font-size:.82rem;font-weight:700;color:#e0e7ff;background:rgba(255,255,255,.2);backdrop-filter:blur(4px);padding:.3rem .85rem;border-radius:50px;display:inline-flex;align-items:center;gap:.3rem;transition:background .2s,color .2s;}
+        .category-card-modern:hover .category-card-btn{background:#fff;color:#4f46e5;}
+
+        .product-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;border-bottom:2px solid #e2e8f0;}
+        .product-tab-btn{display:flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;background:none;border:none;font-size:.9rem;font-weight:600;color:#64748b;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;border-radius:8px 8px 0 0;transition:color .2s,border-color .2s;font-family:inherit;}
+        .product-tab-btn .material-symbols-outlined{font-size:1.1rem;}
+        .product-tab-btn:hover{color:#4f46e5;}
+        .product-tab-btn.active{color:#4f46e5;border-bottom-color:#4f46e5;}
+        .product-tab-panel{display:none;}
+        .product-tab-panel.active{display:block;}
+        .empty-tab{text-align:center;padding:3rem;color:#94a3b8;}
+        .empty-tab .material-symbols-outlined{font-size:3rem;display:block;margin-bottom:.75rem;}
+
+        /* Brands Logo Badges */
+        .brands-section-premium{padding:3rem 0;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;background:linear-gradient(180deg,#f8fafc 0%,#ffffff 50%,#f8fafc 100%);text-align:center;}
+        .brands-header{margin-bottom:1.75rem;}
+        .brands-badge{display:inline-flex;align-items:center;gap:.4rem;background:#eef2ff;color:#4338ca;border:1px solid #c7d2fe;padding:.3rem .9rem;border-radius:50px;font-size:.78rem;font-weight:700;letter-spacing:.5px;margin-bottom:.5rem;}
+        .brands-title{font-size:1.5rem;font-weight:800;color:#0f172a;}
+        .brands-track-wrapper{overflow:hidden;position:relative;mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent);}
+        .brands-track{display:flex;align-items:center;gap:1.5rem;width:max-content;animation:marquee 30s linear infinite;}
+        .brands-track-wrapper:hover .brands-track{animation-play-state:paused;}
+        @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        .brand-card-premium{display:flex;align-items:center;gap:1.25rem;padding:1.1rem 2.2rem;background:#fff;border:1px solid #cbd5e1;border-radius:20px;box-shadow:0 6px 20px rgba(0,0,0,.06);white-space:nowrap;transition:transform .3s,border-color .3s,box-shadow .3s;}
+        .brand-card-premium:hover{transform:translateY(-5px) scale(1.03);border-color:#4f46e5;box-shadow:0 12px 30px rgba(79,70,229,.22);}
+        .brand-img-premium{height:52px;width:auto;max-width:140px;object-fit:contain;filter:none;opacity:1;transition:transform .3s;}
+        .brand-card-premium:hover .brand-img-premium{transform:scale(1.08);}
+        .brand-info{display:flex;flex-direction:column;text-align:left;}
+        .brand-name-p{font-size:1.15rem;font-weight:800;color:#0f172a;}
+        .brand-cat-p{font-size:.82rem;font-weight:600;color:#64748b;}
+
+        .cta-banner{position:relative;display:flex;align-items:center;justify-content:center;gap:2rem;padding:4rem 3rem;border-radius:24px;overflow:hidden;margin:2.5rem 0;box-shadow:0 8px 32px rgba(0,0,0,.12);}
+        .cta-deco{position:absolute;border-radius:50%;opacity:.08;background:#4f46e5;}
+        .cta-deco-1{width:300px;height:300px;top:-100px;right:100px;}
+        .cta-deco-2{width:180px;height:180px;bottom:-80px;left:80px;}
+        .cta-content{z-index:2; display:flex; flex-direction:column; align-items:center; text-align:center; width: 100%;}
+        .cta-badge{display:inline-block;background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;border-radius:50px;padding:.35rem 1.1rem;font-size:.85rem;font-weight:700;margin-bottom:1rem;box-shadow:0 4px 12px rgba(79,70,229,.3);}
+        .cta-text-backdrop{background:rgba(255,255,255,0.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;border:1px solid rgba(255,255,255,0.9);box-shadow:0 4px 20px rgba(0,0,0,.08);}
+        .cta-title{font-size:2.1rem;font-weight:900;color:#0f172a;margin-bottom:.75rem;line-height:1.2;}
+        .cta-desc{font-size:1rem;color:#334155;line-height:1.7;max-width:520px;margin:0 auto;}
+        .cta-actions{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;}
+        .btn-cta-primary{display:flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;padding:.85rem 2rem;border-radius:50px;text-decoration:none;font-weight:700;box-shadow:0 6px 20px rgba(79,70,229,.35);transition:transform .2s,box-shadow .2s;}
+        .btn-cta-primary:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(79,70,229,.45);}
+        .btn-cta-secondary{background:rgba(255,255,255,0.85);color:#4f46e5;padding:.85rem 2rem;border-radius:50px;text-decoration:none;font-weight:700;border:2px solid rgba(79,70,229,0.3);transition:background .2s,border-color .2s,transform .2s;}
+        .btn-cta-secondary:hover{background:#fff;border-color:#4f46e5;transform:translateY(-3px);}
+        .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+        .testimonial-card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:1.75rem;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:box-shadow .2s,transform .2s;}
+        .testimonial-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-3px);}
+        .testimonial-stars{font-size:1.1rem;color:#f59e0b;margin-bottom:1rem;letter-spacing:2px;}
+        .testimonial-text{font-size:.9rem;color:#475569;line-height:1.7;margin-bottom:1.25rem;font-style:italic;}
+        .testimonial-author{display:flex;align-items:center;gap:.75rem;}
+        .testimonial-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.1rem;font-weight:800;flex-shrink:0;}
+        .testimonial-name{font-size:.9rem;font-weight:700;color:#0f172a;}
+        .testimonial-role{font-size:.78rem;color:#94a3b8;}
+
+        /* Welcome Popup Modal */
+        .welcome-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:10000;opacity:0;visibility:hidden;transition:opacity .4s ease,visibility .4s ease;padding:1.5rem;}
+        .welcome-modal-overlay.active{opacity:1;visibility:visible;}
+        .welcome-modal-card{background:#fff;width:100%;max-width:480px;border-radius:24px;padding:2.2rem 2rem;position:relative;box-shadow:0 25px 50px -12px rgba(0,0,0,.25);transform:scale(.85);transition:transform .4s cubic-bezier(.34,1.56,.64,1);text-align:center;border:1px solid #e2e8f0;}
+        .welcome-modal-overlay.active .welcome-modal-card{transform:scale(1);}
+        .welcome-modal-close{position:absolute;top:1rem;right:1rem;background:#f1f5f9;border:none;width:36px;height:36px;border-radius:50%;font-size:1.3rem;color:#64748b;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s;}
+        .welcome-modal-close:hover{background:#e2e8f0;color:#0f172a;}
+        .welcome-badge{display:inline-block;background:linear-gradient(135deg,#e0e7ff,#c7d2fe);color:#4338ca;padding:.35rem 1rem;border-radius:50px;font-size:.78rem;font-weight:800;margin-bottom:.85rem;letter-spacing:.5px;}
+        .welcome-title{font-size:1.6rem;font-weight:800;color:#0f172a;margin-bottom:.5rem;line-height:1.2;}
+        .welcome-subtitle{font-size:.88rem;color:#64748b;margin-bottom:1.25rem;line-height:1.5;}
+        .welcome-code-label{font-size:.8rem;font-weight:600;color:#94a3b8;margin-bottom:.4rem;text-transform:uppercase;letter-spacing:1px;}
+        .welcome-code-box{display:inline-flex;align-items:center;gap:.75rem;background:#f8fafc;border:2px dashed #6366f1;padding:.65rem 1.5rem;border-radius:14px;font-size:1.3rem;font-weight:800;color:#4f46e5;cursor:pointer;transition:background .2s,transform .2s;}
+        .welcome-code-box:hover{background:#eef2ff;transform:scale(1.02);}
+        .copy-icon{font-size:1.2rem;color:#6366f1;}
+        .copy-toast{font-size:.78rem;color:#10b981;font-weight:600;height:18px;margin-top:.3rem;opacity:0;transition:opacity .3s;}
+        .copy-toast.show{opacity:1;}
+        .btn-welcome-action{display:block;width:100%;background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;padding:.85rem;border-radius:50px;text-decoration:none;font-weight:700;font-size:.95rem;margin-top:1.25rem;box-shadow:0 4px 14px rgba(79,70,229,.35);transition:transform .2s,box-shadow .2s;}
+        .btn-welcome-action:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(79,70,229,.45);}
+
+        @media(max-width:900px){.value-grid{grid-template-columns:repeat(2,1fr);}.testimonials-grid{grid-template-columns:1fr;}}
+        @media(max-width:768px){.carousel-slide{flex-direction:column;text-align:center;padding:2.5rem 1.5rem;}.slide-title{font-size:2rem;}.slide-visual{display:none;}.page-content{padding:0 1rem;}.cta-banner{flex-direction:column;padding:2.5rem 1.5rem;text-align:center;}.cta-visual{display:none;}.cta-title{font-size:1.5rem;}.value-grid{grid-template-columns:1fr;}}
+    </style>
+
+    <script>
+        var currentSlide = 0, totalSlides = 3, autoplayTimer;
+        function goToSlide(i){
+            currentSlide = i;
+            document.getElementById('carouselTrack').style.transform = 'translateX(-'+(i*100)+'%)';
+            document.querySelectorAll('.dot').forEach(function(d,idx){d.classList.toggle('active',idx===i);});
+        }
+        function changeSlide(dir){
+            currentSlide=(currentSlide+dir+totalSlides)%totalSlides;
+            goToSlide(currentSlide);
+            clearInterval(autoplayTimer);
+            autoplayTimer=setInterval(function(){changeSlide(1);},5000);
+        }
+        autoplayTimer=setInterval(function(){changeSlide(1);},5000);
+        function switchProductTab(id,btn){
+            document.querySelectorAll('.product-tab-btn').forEach(function(b){b.classList.remove('active');});
+            document.querySelectorAll('.product-tab-panel').forEach(function(p){p.classList.remove('active');});
+            btn.classList.add('active');
+            document.getElementById('panel-'+id).classList.add('active');
+        }
+
+        // Auto open Welcome Banner 800ms after load
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var modal = document.getElementById('welcomeModal');
+                if (modal) modal.classList.add('active');
+            }, 800);
+        });
+
+        function closeWelcomeModal() {
+            var modal = document.getElementById('welcomeModal');
+            if (modal) modal.classList.remove('active');
+        }
+
+        function copyCouponCode() {
+            var code = document.getElementById('couponCode').innerText;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(function() {
+                    var toast = document.getElementById('copyToast');
+                    if (toast) {
+                        toast.classList.add('show');
+                        setTimeout(function() { toast.classList.remove('show'); }, 2000);
+                    }
+                });
+            }
+        }
+
+        /* 🎡 SPIN WHEEL LOGIC */
+        const wheelSlices = [
+            { label: "5% OFF", code: "SPIN5", percent: 5, color: "#4f46e5", text: "#ffffff" },
+            { label: "10% OFF", code: "SPIN10", percent: 10, color: "#0891b2", text: "#ffffff" },
+            { label: "15% OFF", code: "SPIN15", percent: 15, color: "#10b981", text: "#ffffff" },
+            { label: "20% OFF", code: "SPIN20", percent: 20, color: "#f59e0b", text: "#ffffff" },
+            { label: "25% OFF", code: "SPIN25", percent: 25, color: "#ec4899", text: "#ffffff" },
+            { label: "50% OFF", code: "SPIN50", percent: 50, color: "#8b5cf6", text: "#ffffff" }
+        ];
+
+        function drawWheel() {
+            var canvas = document.getElementById('wheelCanvas');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var numSlices = wheelSlices.length;
+            var sliceAngle = (2 * Math.PI) / numSlices;
+            var centerX = canvas.width / 2;
+            var centerY = canvas.height / 2;
+            var radius = centerX - 8;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (var i = 0; i < numSlices; i++) {
+                var startAngle = i * sliceAngle - Math.PI / 2;
+                var endAngle = startAngle + sliceAngle;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = wheelSlices[i].color;
+                ctx.fill();
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = "#ffffff";
+                ctx.stroke();
+
+                // Draw Text inside slice
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + sliceAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = wheelSlices[i].text;
+                ctx.font = "bold 16px sans-serif";
+                ctx.shadowColor = "rgba(0,0,0,0.4)";
+                ctx.shadowBlur = 4;
+                ctx.fillText(wheelSlices[i].label, radius - 20, 6);
+                ctx.restore();
+            }
+        }
+
+        var isWheelSpinning = false;
+
+        function getWeightedWinningIndex() {
+            // Weighted probabilities: 5% (35%), 10% (35%), 15% (20%), 20% (6%), 25% (3%), 50% (1%)
+            var weights = [35, 35, 20, 6, 3, 1];
+            var totalWeight = 100;
+            var randomNum = Math.random() * totalWeight;
+            var weightSum = 0;
+            for (var i = 0; i < weights.length; i++) {
+                weightSum += weights[i];
+                if (randomNum <= weightSum) {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        function spinWheel() {
+            if (isWheelSpinning) return;
+
+            var existingCode = localStorage.getItem('melody_discount_code');
+            if (existingCode) {
+                showSpunState(existingCode, localStorage.getItem('melody_discount_percent'));
+                return;
+            }
+
+            isWheelSpinning = true;
+            var disc = document.getElementById('wheelDisc');
+            
+            // Select winning slice with weighted probability (5%, 10%, 15% have 90% chance combined)
+            var winningIdx = getWeightedWinningIndex();
+            var winner = wheelSlices[winningIdx];
+
+            var sliceDegree = 360 / wheelSlices.length;
+            // Pointer is at top. Calculate target rotation
+            var rotationTarget = (360 * 6) + (360 - (winningIdx * sliceDegree) - (sliceDegree / 2));
+
+            disc.style.transition = 'transform 4.5s cubic-bezier(0.15, 0.9, 0.15, 1)';
+            disc.style.transform = 'rotate(' + rotationTarget + 'deg)';
+
+            setTimeout(function() {
+                isWheelSpinning = false;
+                localStorage.setItem('melody_discount_code', winner.code);
+                localStorage.setItem('melody_discount_percent', winner.percent);
+
+                showSpunState(winner.code, winner.percent);
+
+                // Show celebration modal
+                document.getElementById('modalDiscountValue').innerText = winner.percent + '% OFF';
+                document.getElementById('modalCouponCode').innerText = winner.code;
+                var modal = document.getElementById('spinWinModal');
+                if (modal) modal.style.display = 'flex';
+            }, 4700);
+        }
+
+        function showSpunState(code, percent) {
+            var box = document.getElementById('spinResultBox');
+            if (box) box.style.display = 'flex';
+            var discText = document.getElementById('wonDiscountText');
+            if (discText) discText.innerText = percent + '% OFF';
+            var codeText = document.getElementById('wonCodeText');
+            if (codeText) codeText.innerText = code;
+
+            var spinBtn = document.getElementById('spinBtn');
+            if (spinBtn) spinBtn.style.display = 'none';
+            var shopBtn = document.getElementById('shopWithDiscountBtn');
+            if (shopBtn) shopBtn.style.display = 'inline-flex';
+        }
+
+        function closeSpinModal() {
+            var modal = document.getElementById('spinWinModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function copySpinModalCode() {
+            var code = document.getElementById('modalCouponCode').innerText;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code).then(function() {
+                    alert('Coupon code ' + code + ' copied to clipboard!');
+                });
+            }
+        }
+
+        window.addEventListener('load', function() {
+            drawWheel();
+            var savedCode = localStorage.getItem('melody_discount_code');
+            var savedPercent = localStorage.getItem('melody_discount_percent');
+            if (savedCode) {
+                showSpunState(savedCode, savedPercent);
+            }
+        });
+    </script>
+</body>
+</html>

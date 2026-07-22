@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Common head element -->
+<head th:fragment="html_head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">MelodyMart - Music Store & Rentals</title>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!-- Google Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+</head>
+
+<body>
+    <!-- Common Header Navigation -->
+    <header th:fragment="header">
+        <!-- TOP APP BAR -->
+        <div class="app-topbar">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="menu-btn" onclick="toggleSidebar()">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <a th:href="@{/}" class="logo-link">
+                    <span class="material-symbols-outlined logo-icon" style="color: #ff0000; font-size: 2.2rem; margin-right: 0.2rem;">music_video</span>
+                    <span class="logo-text">MelodyMart</span>
+                </a>
+            </div>
+            
+            <!-- MOVING NEWS TICKER -->
+            <div class="topbar-ticker-container">
+                <div class="topbar-ticker-track" th:utext="${tickerConfig != null ? tickerConfig.newsTickerText : '<span>⚡ Special Offer: Use coupon code <strong style=''color: #9a3412;''>MELODY15</strong> for 15% off!</span>'}">
+                </div>
+            </div>
+
+            <div class="topbar-right" th:if="${session.currentUser != null}" style="display: flex; align-items: center; gap: 1rem;">
+                <a th:href="@{/profile}" class="user-badge" style="background: none; border: none; padding: 0; box-shadow: none; text-decoration: none;">
+                    <img th:if="${session.currentUser.profilePicture != null &amp;&amp; !session.currentUser.profilePicture.isEmpty()}" 
+                         th:src="${session.currentUser.profilePicture}" 
+                         alt="Avatar" 
+                         style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid #4f46e5;"
+                         onerror="this.style.display='none';">
+                    <span th:if="${session.currentUser.profilePicture == null || session.currentUser.profilePicture.isEmpty()}" 
+                          class="material-symbols-outlined" style="font-size: 2rem; color: #64748b;">account_circle</span>
+                </a>
+            </div>
+            <div class="topbar-right" th:if="${session.currentUser == null}">
+                <a th:href="@{/login}" class="btn-nav-action">Sign In</a>
+            </div>
+        </div>
+
+        <!-- LEFT SIDEBAR -->
+        <nav class="app-sidebar" id="sidebar">
+            
+            <div class="sidebar-section">
+                <a th:href="@{/}" class="sidebar-item">
+                    <span class="material-symbols-outlined">home</span>
+                    <span>Home</span>
+                </a>
+                <a th:href="@{/catalog/buy}" class="sidebar-item">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                    <span>Buy Instruments</span>
+                </a>
+                <a th:href="@{/catalog/rent}" class="sidebar-item">
+                    <span class="material-symbols-outlined">key</span>
+                    <span>Rent Instruments</span>
+                </a>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <!-- You Section -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-section-title">You <span class="material-symbols-outlined" style="font-size: 1rem; margin-left: 0.25rem; vertical-align: middle;">chevron_right</span></h3>
+                
+                <a th:if="${session.currentUser != null}" th:href="@{/profile}" class="sidebar-item">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>My Account</span>
+                </a>
+                
+                <a th:href="@{/cart}" class="sidebar-item">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span>Cart</span>
+                    <span id="cart-count" class="sidebar-badge"
+                          th:style="${session.cart != null && session.cart.size() > 0 ? 'display: inline;' : 'display: none;'}"
+                          th:text="${session.cart != null ? session.cart.size() : 0}">0</span>
+                </a>
+            </div>
+
+            <div class="sidebar-divider" th:if="${session.currentUser != null && session.currentUser.role.name() == 'ADMIN'}"></div>
+
+            <!-- Admin Section -->
+            <div class="sidebar-section" th:if="${session.currentUser != null && session.currentUser.role.name() == 'ADMIN'}">
+                <h3 class="sidebar-section-title">Admin <span class="material-symbols-outlined" style="font-size: 1rem; margin-left: 0.25rem; vertical-align: middle;">chevron_right</span></h3>
+                <a th:href="@{/admin/dashboard}" class="sidebar-item">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a th:href="@{/admin/inventory}" class="sidebar-item">
+                    <span class="material-symbols-outlined">inventory_2</span>
+                    <span>Inventory</span>
+                </a>
+                <a th:href="@{/admin/users}" class="sidebar-item">
+                    <span class="material-symbols-outlined">group</span>
+                    <span>Users</span>
+                </a>
+                <a th:href="@{/admin/orders}" class="sidebar-item">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    <span>Orders</span>
+                </a>
+                <a th:href="@{/admin/rentals}" class="sidebar-item">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span>Rentals</span>
+                </a>
+                <a th:href="@{/admin/banner}" class="sidebar-item">
+                    <span class="material-symbols-outlined">campaign</span>
+                    <span>Banner Manager</span>
+                </a>
+                <a th:href="@{/admin/ticker}" class="sidebar-item">
+                    <span class="material-symbols-outlined">linear_scale</span>
+                    <span>Ticker Manager</span>
+                </a>
+                <a th:href="@{/admin/chat}" class="sidebar-item" style="position:relative;">
+                    <span class="material-symbols-outlined">forum</span>
+                    <span>Live Chat</span>
+                    <span id="adminChatBadge" style="display:none; background:#ef4444; color:#fff; font-size:0.65rem; font-weight:800; padding:0.1rem 0.45rem; border-radius:50px; margin-left:auto;">0</span>
+                </a>
+            </div>
+
+            <div class="sidebar-divider"></div>
+
+            <!-- Bottom Profile / Logout -->
+            <div class="sidebar-section" th:if="${session.currentUser != null}">
+                <div class="sidebar-item" style="pointer-events: none; opacity: 0.9;">
+                    <span class="material-symbols-outlined" style="color: var(--text-muted);">account_circle</span>
+                    <div style="display: flex; flex-direction: column;">
+                        <span th:text="${session.currentUser.name}" style="line-height: 1.2; font-weight: 500; color: var(--text-primary);">User</span>
+                        <span class="badge-role" th:classappend="${session.currentUser.role.name() == 'ADMIN' ? 'admin' : ''}" th:text="${session.currentUser.role}" style="font-size: 0.65rem; margin-top: 0.25rem; display: inline-block; width: fit-content; padding: 0.1rem 0.35rem;">CUSTOMER</span>
+                    </div>
+                </div>
+                <a th:href="@{/logout}" class="sidebar-item" style="color: var(--color-danger); margin-top: 0.25rem;">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Sign Out</span>
+                </a>
+            </div>
+            
+            <div class="sidebar-section" th:if="${session.currentUser == null}" style="padding-top: 1rem;">
+                <p style="font-size: 0.85rem; padding: 0 1rem; margin-bottom: 0.75rem; color: var(--text-muted); line-height: 1.4;">Sign in to save history and rent instruments.</p>
+                <a th:href="@{/login}" class="btn btn-secondary" style="margin: 0 1rem; text-align: center; display: block; border-radius: 20px; font-size: 0.9rem; padding: 0.4rem 1rem;">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 0.25rem; font-size: 1.1rem;">account_circle</span> Sign In
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Content Placeholder (To be replaced by children pages) -->
+    <main>
+        <p>Base Layout Template Content Placeholder</p>
+    </main>
+
+    <!-- Common Footer -->
+    <footer th:fragment="footer">
+        <div class="container">
+            <p>&copy; 2026 MelodyMart Inc. All Rights Reserved. Dedicated for University Project SE2030.</p>
+            <p style="font-size: 0.75rem; margin-top: 0.5rem; color: var(--text-muted);">Built with Spring Boot MVC, Jackson local database, and Vanilla JavaScript UI.</p>
+        </div>
+        
+        <!-- Client script files -->
+        <script th:src="@{/js/main.js}"></script>
+
+        <!-- ═══ FLOATING CHAT WIDGET (Customers only) ═══ -->
+        <div th:if="${session.currentUser != null and session.currentUser.role.name() != 'ADMIN'}">
+
+            <!-- Chat Bubble Button -->
+            <button id="chatFloatBtn" onclick="toggleChatWidget()"
+                    style="position:fixed;bottom:1.5rem;right:1.5rem;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(79,70,229,.45);display:flex;align-items:center;justify-content:center;z-index:8888;transition:transform .2s,box-shadow .2s;">
+                <span class="material-symbols-outlined" style="font-size:1.6rem;">chat</span>
+                <span id="chatUnreadDot" style="position:absolute;top:4px;right:4px;width:14px;height:14px;background:#ef4444;border:2px solid #fff;border-radius:50%;display:none;"></span>
+            </button>
+
+            <!-- Chat Widget Panel -->
+            <div id="chatWidget" style="display:none;position:fixed;bottom:5rem;right:1.5rem;width:360px;max-height:520px;background:#fff;border-radius:20px;box-shadow:0 16px 48px rgba(15,23,42,.2);border:1px solid #e2e8f0;z-index:8889;flex-direction:column;overflow:hidden;">
+                <!-- Widget Header -->
+                <div style="background:linear-gradient(135deg,#4f46e5,#0891b2);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;">
+                    <div style="display:flex;align-items:center;gap:0.65rem;">
+                        <span class="material-symbols-outlined" style="color:#fff;font-size:1.4rem;">support_agent</span>
+                        <div>
+                            <div style="color:#fff;font-weight:700;font-size:0.9rem;">MelodyMart Support</div>
+                            <div style="color:rgba(255,255,255,.75);font-size:0.72rem;">We usually reply instantly</div>
+                        </div>
+                    </div>
+                    <button onclick="toggleChatWidget()" style="background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;">&#x2715;</button>
+                </div>
+
+                <!-- Messages -->
+                <div id="chatMessagesBox" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:0.6rem;background:#f8faff;max-height:320px;"></div>
+
+                <!-- Input -->
+                <div style="padding:0.75rem 1rem;border-top:1px solid #f1f5f9;display:flex;gap:0.5rem;align-items:flex-end;background:#fff;">
+                    <textarea id="chatInputBox" rows="1" placeholder="Type a message..." style="flex:1;padding:0.6rem 0.85rem;border:1px solid #e2e8f0;border-radius:12px;font-size:0.88rem;font-family:inherit;resize:none;outline:none;transition:border .2s;" onkeydown="handleChatEnter(event)" onfocus="this.style.borderColor='#4f46e5'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
+                    <button onclick="sendCustomerMessage()" style="width:40px;height:40px;background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                        <span class="material-symbols-outlined" style="font-size:1.1rem;">send</span>
+                    </button>
+                </div>
+            </div>
+
+            <script>
+                var chatOpen = false;
+                var chatPollTimer = null;
+
+                function toggleChatWidget() {
+                    chatOpen = !chatOpen;
+                    var widget = document.getElementById('chatWidget');
+                    widget.style.display = chatOpen ? 'flex' : 'none';
+                    widget.style.flexDirection = 'column';
+                    if (chatOpen) {
+                        loadCustomerMessages();
+                        document.getElementById('chatUnreadDot').style.display = 'none';
+                        if (!chatPollTimer) chatPollTimer = setInterval(loadCustomerMessages, 3000);
+                    } else {
+                        if (chatPollTimer) { clearInterval(chatPollTimer); chatPollTimer = null; }
+                    }
+                }
+
+                function loadCustomerMessages() {
+                    fetch('/chat/messages')
+                        .then(r => r.json())
+                        .then(function(msgs) {
+                            renderCustomerMessages(msgs);
+                        }).catch(console.error);
+                }
+
+                function renderCustomerMessages(msgs) {
+                    var box = document.getElementById('chatMessagesBox');
+                    var wasAtBottom = box.scrollTop + box.clientHeight >= box.scrollHeight - 20;
+                    box.innerHTML = '';
+                    if (msgs.length === 0) {
+                        box.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:1.5rem;font-size:0.82rem;"><span class="material-symbols-outlined" style="font-size:2rem;display:block;margin-bottom:0.5rem;">chat_bubble_outline</span>Send a message to start chatting with our support team!</div>';
+                        return;
+                    }
+                    msgs.forEach(function(msg) {
+                        var isAdmin = msg.fromAdmin;
+                        var bubble = document.createElement('div');
+                        bubble.style.cssText = 'display:flex;flex-direction:column;align-items:' + (isAdmin ? 'flex-start' : 'flex-end') + ';';
+                        var time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '';
+                        bubble.innerHTML =
+                            '<div style="max-width:80%;padding:0.55rem 0.9rem;border-radius:' + (isAdmin ? '16px 16px 16px 4px' : '16px 16px 4px 16px') + ';font-size:0.87rem;line-height:1.5;word-wrap:break-word;' +
+                            (isAdmin ? 'background:#fff;border:1px solid #e2e8f0;color:#1e293b;' : 'background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;') + '">' +
+                            escStr(msg.content) +
+                            '</div><div style="font-size:0.65rem;color:#94a3b8;margin-top:0.2rem;">' + (isAdmin ? 'Support · ' : '') + time + '</div>';
+                        box.appendChild(bubble);
+                    });
+                    if (wasAtBottom) box.scrollTop = box.scrollHeight;
+                }
+
+                function sendCustomerMessage() {
+                    var input = document.getElementById('chatInputBox');
+                    var content = input.value.trim();
+                    if (!content) return;
+                    var body = new URLSearchParams();
+                    body.append('content', content);
+                    fetch('/chat/send', {method:'POST', body:body})
+                        .then(r => r.json())
+                        .then(function() {
+                            input.value = '';
+                            loadCustomerMessages();
+                        }).catch(console.error);
+                }
+
+                function handleChatEnter(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendCustomerMessage(); }
+                }
+
+                function escStr(str) {
+                    var d = document.createElement('div');
+                    d.appendChild(document.createTextNode(str || ''));
+                    return d.innerHTML;
+                }
+
+                // Poll for unread when chat is closed
+                setInterval(function() {
+                    if (!chatOpen) {
+                        fetch('/chat/messages').then(r => r.json()).then(function(msgs) {
+                            // check if last message is from admin (new reply)
+                            if (msgs.length > 0 && msgs[msgs.length-1].fromAdmin) {
+                                document.getElementById('chatUnreadDot').style.display = 'block';
+                            }
+                        }).catch(() => {});
+                    }
+                }, 10000);
+            </script>
+        </div>
+
+        <!-- Admin chat unread badge polling -->
+        <script th:if="${session.currentUser != null and session.currentUser.role.name() == 'ADMIN'}">
+            function pollAdminChatBadge() {
+                fetch('/chat/admin/unread-count')
+                    .then(r => r.json())
+                    .then(function(data) {
+                        var badge = document.getElementById('adminChatBadge');
+                        if (badge) {
+                            if (data.count > 0) {
+                                badge.style.display = 'inline';
+                                badge.textContent = data.count;
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }).catch(() => {});
+            }
+            pollAdminChatBadge();
+            setInterval(pollAdminChatBadge, 8000);
+        </script>
+    </footer>
+</body>
+</html>

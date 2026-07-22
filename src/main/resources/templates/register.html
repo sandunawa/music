@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head('MelodyMart | Sign Up')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div class="form-panel-wrapper">
+            <div class="form-panel" style="max-width: 550px;">
+                <div class="form-header">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-cyan);">person_add</span>
+                    <h2 class="form-title">Create Account</h2>
+                    <p class="form-subtitle">Register to shop, book rentals, and track order shipments</p>
+                </div>
+
+                <!-- Registration errors -->
+                <div class="form-alert" th:if="${error != null}" th:text="${error}">
+                    Registration failed due to input errors.
+                </div>
+
+                <form th:action="@{/register}" method="post" onsubmit="return validateRegisterForm()">
+                    <div class="form-group">
+                        <label class="filter-label" for="name">Full Name</label>
+                        <input type="text" id="name" name="name" th:value="${user != null ? user.name : ''}" placeholder="John Doe" class="form-control" required minlength="2">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="email">Email Address</label>
+                        <input type="email" id="email" name="email" th:value="${user != null ? user.email : ''}" placeholder="name@example.com" class="form-control" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="filter-label" for="password">Password</label>
+                            <input type="password" id="password" name="password" placeholder="Min. 6 characters" class="form-control" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label class="filter-label" for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" placeholder="Repeat password" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="role">Register As (Role Selection)</label>
+                        <select id="role" name="role" class="form-control" required>
+                            <option value="CUSTOMER" th:selected="${user != null && user.role != null && user.role.name() == 'CUSTOMER'}">Customer</option>
+                            <option value="ADMIN" th:selected="${user != null && user.role != null && user.role.name() == 'ADMIN'}">Administrator</option>
+                        </select>
+                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">
+                            * Admin role registration is enabled for easy evaluation of admin interfaces.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="phoneNumber">Phone Number</label>
+                        <input type="tel" id="phoneNumber" name="phoneNumber" th:value="${user != null ? user.phoneNumber : ''}" placeholder="e.g. +1 (555) 019-2831" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="address">Shipping / Billing Address</label>
+                        <textarea id="address" name="address" th:text="${user != null ? user.address : ''}" placeholder="123 Music Lane, Seattle, WA 98101" class="form-control" rows="3" required style="resize: vertical; font-family: inherit;"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-sm); margin-top: 1.5rem; padding: 0.75rem;">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    Already registered? <a th:href="@{/login}">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+
+    <script>
+        function validateRegisterForm() {
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (password !== confirm) {
+                alert("Passwords do not match! Please check details.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

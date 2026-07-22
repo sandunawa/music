@@ -1,0 +1,156 @@
+[ {
+  "id" : "p-git-1",
+  "name" : "Fender Player Stratocaster Electric Guitar",
+  "category" : "GUITAR",
+  "brand" : "Fender",
+  "description" : "The inspiring sound of a Stratocaster is one of the foundations of Fender. Authentic Fender tone and style with modern player comforts.",
+  "price" : 849.99,
+  "rentalPricePerDay" : 25.0,
+  "stockQuantity" : 5,
+  "imageUrl" : "https://images.unsplash.com/photo-1550985616-10810253b84d?q=80&w=600&auto=format&fit=crop",
+  "specifications" : {
+    "Body" : "Alder",
+    "Neck" : "Maple (Modern C Profile)",
+    "Fingerboard" : "Maple, 9.5\" Radius",
+    "Pickups" : "3x Player Series Alnico 5 Strat Single-Coil"
+  },
+  "ownerId" : "admin",
+  "ownerName" : "MelodyMart",
+  "forSale" : true,
+  "forRent" : true
+}, {
+  "id" : "p-git-2",
+  "name" : "Epiphone EJ-200SCE Acoustic-Electric Guitar",
+  "category" : "GUITAR",
+  "brand" : "Epiphone",
+  "description" : "The King of the Flat-tops, updated with a cutaway and Fishman electronics for outstanding live acoustic projection.",
+  "price" : 549.0,
+  "rentalPricePerDay" : 18.0,
+  "stockQuantity" : 8,
+  "imageUrl" : "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=600&auto=format&fit=crop",
+  "specifications" : {
+    "Top" : "Solid Sitka Spruce",
+    "Back & Sides" : "Mahogany",
+    "Neck" : "Mahogany (SlimTaper D)",
+    "Electronics" : "Fishman Presys II preamp"
+  },
+  "ownerId" : "admin",
+  "ownerName" : "MelodyMart",
+  "forSale" : true,
+  "forRent" : true
+}, {
+  "id" : "p-key-1",
+  "name" : "Yamaha P-125 88-Key Digital Piano",
+  "category" : "KEYBOARD",
+  "brand" : "Yamaha",
+  "description" : "A compact digital piano that combines incredible piano performance with a user-friendly, minimalist design.",
+  "price" : 699.99,
+  "rentalPricePerDay" : 22.0,
+  "stockQuantity" : 4,
+  "imageUrl" : "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600&auto=format&fit=crop",
+  "specifications" : {
+    "Keys" : "88 Weighted (Graded Hammer Standard)",
+    "Polyphony" : "192 Notes",
+    "Voices" : "24 Instrument Voices",
+    "Outputs" : "2x Headphone Jack, USB to Host"
+  },
+  "ownerId" : "admin",
+  "ownerName" : "MelodyMart",
+  "forSale" : true,
+  "forRent" : true
+}, {
+  "id" : "p-drum-1",
+  "name" : "Roland TD-17KVX Electronic Drum Kit",
+  "category" : "DRUMS",
+  "brand" : "Roland",
+  "description" : "The ultimate electronic drumming experience. Features natural-feeling mesh pads, custom kit uploads, and advanced learning tools.",
+  "price" : 1499.0,
+  "rentalPricePerDay" : 45.0,
+  "stockQuantity" : 3,
+  "imageUrl" : "https://images.unsplash.com/photo-1524486361537-8ad15938e1a3?q=80&w=600&auto=format&fit=crop",
+  "specifications" : {
+    "Drum Sound Module" : "TD-17",
+    "Snare Pad" : "PDX-12 (12-inch double-mesh)",
+    "Tom Pads" : "3x PDX-8 (8-inch double-mesh)",
+    "Cymbal Pads" : "CY-5 Hi-Hat, CY-12C Crash, CY-13R Ride"
+  },
+  "ownerId" : "admin",
+  "ownerName" : "MelodyMart",
+  "forSale" : true,
+  "forRent" : true
+}, {
+  "id" : "p-studio-1",
+  "name" : "Shure SM7B Vocal Microphone",
+  "category" : "STUDIO_AUDIO",
+  "brand" : "Shure",
+  "description" : "The industry-standard vocal mic for broadcasting, podcasting, and studio tracking. Legendary warm and smooth sound.",
+  "price" : 399.0,
+  "rentalPricePerDay" : 15.0,
+  "stockQuantity" : 10,
+  "imageUrl" : "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=600&auto=format&fit=crop",
+  "specifications" : {
+    "Type" : "Dynamic",
+    "Polar Pattern" : "Cardioid",
+    "Frequency Range" : "50Hz - 20kHz",
+    "Connection" : "XLR"
+  },
+  "ownerId" : "admin",
+  "ownerName" : "MelodyMart",
+  "forSale" : true,
+  "forRent" : true
+}, {
+  "id" : "p-brass-1",
+  "name" : "Yamaha YAS-280 Student Alto Saxophone",
+  "category" : "BRASS_WOODWIND",
+  "brand" : "Yamaha",
+  "description" : "Provides beginners with a reliable instrument to start learning. Offers a bright saxophone sound with excellent intonation.",
+  "price" : 1149.0,
+  "rentalPricePerDay" : 35.0,
+  "stockQuantity" : 3,
+  "imageUrl" : "https://images.unsplash.com/photo-1528143358888-6d3c7f67bd5d?q=80&w=600&auto=format&fit=crop",
+  "specifications" : {
+    "Key" : "Eb (Alto)",
+    "Body Material" : "Yellow Brass (Gold Lacquer)",
+    "Auxiliary Keys" : "High F#, Front F",
+    "Case" : "Included hard shell gig bag"
+  },
+  "ownerId" : "admin",
+  "ownerName" : "MelodyMart",
+  "forSale" : true,
+  "forRent" : true
+}, {
+  "id" : "p-acc-1",
+  "name" : "Audio-Technica ATH-M50x Monitor Headphones",
+  "category" : "ACCESSORIES",
+  "brand" : "Audio-Technica",
+  "description" : "Critically acclaimed studio monitoring headphones offering exceptional clarity, deep bass response, and comfortable sound isolation.",
+  "price" : 149.0,
+  "rentalPricePerDay" : 5.0,
+  "stockQuantity" : 20,
+  "imageUrl" : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600&auto=format&fit=crop",
+  "specifications" : {
+    "Driver Size" : "45 mm Neodymium",
+    "Frequency Response" : "15Hz - 28kHz",
+    "Impedance" : "38 Ohms",
+    "Cables" : "3 detachable cables (coiled, straight short, straight long)"
+  },
+  "ownerId" : "admin",
+  "ownerName" : "MelodyMart",
+  "forSale" : true,
+  "forRent" : true
+}, {
+  "id" : "p-f2ca5573",
+  "name" : "piano",
+  "category" : "KEYBOARD",
+  "brand" : "yamaha",
+  "description" : "aaaaaaaaaaaaaaaaaaaaaaaa",
+  "price" : 20.0,
+  "rentalPricePerDay" : 0.0,
+  "stockQuantity" : 15,
+  "imageUrl" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaYSjx2jugG59T8KnGdCO8_iDZbPdgCbzpyoS7SliNLQ&s=10",
+  "specifications" : { },
+  "ownerId" : "u-9d27e8c0",
+  "ownerName" : "awasandun",
+  "forSale" : true,
+  "forRent" : false
+} ]

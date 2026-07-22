@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head(${isEdit ? 'Edit Listing' : 'Post Listing'} + ' | MelodyMart')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div style="margin-bottom: 2rem;">
+            <a th:href="@{/profile}" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: var(--radius-sm);">
+                <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_back</span> Return to Profile
+            </a>
+        </div>
+
+        <div class="form-panel-wrapper" style="max-width: 700px;">
+            <div class="form-panel" style="padding: 2.5rem; border-radius: var(--radius-md);">
+                <div class="form-header" style="text-align: left; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                    <h2 class="form-title" th:text="${isEdit ? 'Modify Instrument Listing' : 'List Instrument for Sale or Rent'}">
+                        Product Listing Form
+                    </h2>
+                    <p class="form-subtitle">Make your musical gear available to buy or rent within the university network</p>
+                </div>
+
+                <!-- Error feedback -->
+                <div class="form-alert" th:if="${param.error != null}" th:text="${param.error}">
+                    Listing error.
+                </div>
+
+                <form th:action="@{/profile/listings/save}" method="post" onsubmit="return validateListingForm()">
+                    <!-- Carry ID if editing -->
+                    <input type="hidden" name="id" th:value="${product.id}">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="filter-label" for="name">Product Name / Model</label>
+                            <input type="text" id="name" name="name" th:value="${product.name}" class="form-control" required placeholder="e.g. Epiphone Les Paul Custom">
+                        </div>
+                        <div class="form-group">
+                            <label class="filter-label" for="brand">Brand</label>
+                            <input type="text" id="brand" name="brand" th:value="${product.brand}" class="form-control" required placeholder="e.g. Epiphone">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="filter-label" for="category">Category</label>
+                            <select id="category" name="category" class="form-control" required>
+                                <option value="">-- Choose Category --</option>
+                                <option th:each="cat : ${categories}" 
+                                        th:value="${cat}" 
+                                        th:text="${cat.displayName}"
+                                        th:selected="${cat == product.category}">Category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="filter-label" for="stockQuantity">Available Quantity</label>
+                            <input type="number" id="stockQuantity" name="stockQuantity" th:value="${product.stockQuantity != 0 ? product.stockQuantity : 1}" class="form-control" required min="1" placeholder="e.g. 1">
+                        </div>
+                    </div>
+
+                    <!-- Listing Options Checkboxes -->
+                    <div style="background-color: var(--bg-surface-elevated); border: 1px solid var(--border-color); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem; color: var(--accent-cyan);">Listing Categories</h4>
+                        <div style="display: flex; gap: 2rem; align-items: center;">
+                            <label class="filter-checkbox-label">
+                                <input type="checkbox" id="forSaleChecked" name="forSaleChecked" th:checked="${product.id == null || product.forSale}" value="true" onchange="togglePriceFields()">
+                                <span style="font-weight: 600;">List For Sale</span>
+                            </label>
+                            <label class="filter-checkbox-label">
+                                <input type="checkbox" id="forRentChecked" name="forRentChecked" th:checked="${product.id != null && product.forRent}" value="true" onchange="togglePriceFields()">
+                                <span style="font-weight: 600;">List For Rent</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Price inputs display (controlled via JS based on checkbox status) -->
+                    <div class="form-row">
+                        <div class="form-group" id="retailPriceGroup">
+                            <label class="filter-label" for="price">Retail Sale Price ($)</label>
+                            <input type="number" id="price" name="price" th:value="${product.price}" class="form-control" min="0" step="0.01" placeholder="e.g. 549.00">
+                        </div>
+                        <div class="form-group" id="rentalPriceGroup">
+                            <label class="filter-label" for="rentalPricePerDay">Daily Rental Rate ($)</label>
+                            <input type="number" id="rentalPricePerDay" name="rentalPricePerDay" th:value="${product.rentalPricePerDay}" class="form-control" min="0" step="0.01" placeholder="e.g. 12.50">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="imageUrl">Image Link (URL)</label>
+                        <input type="url" id="imageUrl" name="imageUrl" th:value="${product.imageUrl}" class="form-control" required placeholder="https://images.unsplash.com/photo-...">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="description">Detailed Description</label>
+                        <textarea id="description" name="description" th:text="${product.description}" class="form-control" rows="4" required placeholder="Outline product design, playability, strings used, and other relevant details..." style="resize: vertical; font-family: inherit;"></textarea>
+                    </div>
+
+                    <!-- Specifications Builder -->
+                    <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--accent-cyan);">Specifications</h3>
+                            <button type="button" class="btn btn-secondary" onclick="addSpecRow()" style="font-size: 0.75rem; padding: 0.35rem 0.75rem; border-radius: var(--radius-sm);">
+                                <span class="material-symbols-outlined" style="font-size: 0.95rem;">add</span> Add Row
+                            </button>
+                        </div>
+
+                        <div id="specifications-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div th:each="spec : ${product.specifications}" class="spec-builder-row">
+                                <input type="text" name="specKeys" th:value="${spec.key}" class="form-control" placeholder="e.g. Body" required>
+                                <input type="text" name="specValues" th:value="${spec.value}" class="form-control" placeholder="e.g. Mahogany" required>
+                                <button type="button" class="btn btn-secondary" onclick="this.parentElement.remove()" style="padding: 0.5rem 1rem;">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-sm); margin-top: 2.5rem; padding: 0.8rem; font-size: 1.05rem;">
+                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">save</span> Save Marketplace Listing
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+
+    <script>
+        function togglePriceFields() {
+            const forSale = document.getElementById('forSaleChecked').checked;
+            const forRent = document.getElementById('forRentChecked').checked;
+
+            const saleGroup = document.getElementById('retailPriceGroup');
+            const rentGroup = document.getElementById('rentalPriceGroup');
+
+            const saleInput = document.getElementById('price');
+            const rentInput = document.getElementById('rentalPricePerDay');
+
+            if (forSale) {
+                saleGroup.style.opacity = '1';
+                saleInput.disabled = false;
+                saleInput.required = true;
+            } else {
+                saleGroup.style.opacity = '0.4';
+                saleInput.disabled = true;
+                saleInput.required = false;
+                saleInput.value = '';
+            }
+
+            if (forRent) {
+                rentGroup.style.opacity = '1';
+                rentInput.disabled = false;
+                rentInput.required = true;
+            } else {
+                rentGroup.style.opacity = '0.4';
+                rentInput.disabled = true;
+                rentInput.required = false;
+                rentInput.value = '';
+            }
+        }
+
+        function validateListingForm() {
+            const forSale = document.getElementById('forSaleChecked').checked;
+            const forRent = document.getElementById('forRentChecked').checked;
+
+            if (!forSale && !forRent) {
+                alert("You must choose at least one option (List for Sale or List for Rent).");
+                return false;
+            }
+            return true;
+        }
+
+        // Initialize display state on load
+        document.addEventListener('DOMContentLoaded', () => {
+            togglePriceFields();
+        });
+    </script>
+</body>
+</html>

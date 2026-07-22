@@ -1,0 +1,28 @@
+[ {
+  "id" : "u-admin",
+  "name" : "Alex Mercer (Admin)",
+  "email" : "admin@melodymart.com",
+  "passwordHash" : "$2a$10$jVeCpgCsiQ17Xs60Tptr6eIL3NWn09icRVChRlUKdRS3ZjJ4s4Nj6",
+  "role" : "ADMIN",
+  "phoneNumber" : "0711",
+  "address" : "MelodyMart Corporate HQ, Boston, MA",
+  "profilePicture" : "/images/profiles/profile-u-admin-1784751178156.jpg"
+}, {
+  "id" : "u-customer",
+  "name" : "Sophia Reynolds",
+  "email" : "customer@melodymart.com",
+  "passwordHash" : "$2a$10$EWeJLLK0/SRgBFnzzxPP2OWrMs8sBoGvC32s7ZOoK0L72RT/ziWfm",
+  "role" : "CUSTOMER",
+  "phoneNumber" : "+1 (555) 014-9988",
+  "address" : "742 Evergreen Terrace, Springfield, OR",
+  "profilePicture" : null
+}, {
+  "id" : "u-9d27e8c0",
+  "name" : "awasandun",
+  "email" : "admin@gmail.com",
+  "passwordHash" : "$2a$10$E45R2yCG.pfK74DsQLivrunAEj4QjPxcnLZ6D/RC7BHqc6yUy0avS",
+  "role" : "CUSTOMER",
+  "phoneNumber" : "+94711706452",
+  "address" : "77,\r\nDHARMAPALA MAWATHA,",
+  "profilePicture" : null
+} ]

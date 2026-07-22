@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head(${product.name} + ' | MelodyMart')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div style="margin-bottom: 2rem;">
+            <a th:href="@{/catalog}" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: var(--radius-sm);">
+                <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_back</span> Back to Catalog
+            </a>
+        </div>
+
+        <div class="product-detail-container">
+            <!-- Left Gallery Column -->
+            <div class="detail-gallery">
+                <img th:src="${product.imageUrl}" th:alt="${product.name}" class="detail-img" onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800'">
+            </div>
+
+            <!-- Right Product Purchase Details -->
+            <div class="detail-info">
+                <div class="detail-header">
+                    <span class="detail-brand" th:text="${product.brand}">Brand Name</span>
+                    <h1 class="detail-title" th:text="${product.name}">Instrument Model Title</h1>
+                    
+                    <div class="stock-status">
+                        <span class="status-dot" th:classappend="${product.stockQuantity > 0 ? 'in' : 'out'}"></span>
+                        <span th:text="${product.stockQuantity > 0 ? 'In Stock (' + product.stockQuantity + ' available)' : 'Out of Stock'}"
+                              th:style="${product.stockQuantity > 0 ? 'color: var(--color-success);' : 'color: var(--color-danger);'}">Stock Status</span>
+                    </div>
+                <div style="margin-top: 0.75rem; margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem;">
+                    <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--accent-cyan);">storefront</span>
+                    Listed by: <strong th:text="${product.ownerName}">MelodyMart</strong>
+                </div>
+
+                <p class="detail-description" th:text="${product.description}">
+                    Full product description outlining details, usage, and premium build specs.
+                </p>
+
+                <!-- Prices panel (conditionally hides / disables elements) -->
+                <div class="detail-price-box">
+                    <div class="detail-price-col" th:style="${product.forSale ? '' : 'opacity: 0.4;'}">
+                        <div class="detail-price-label">Retail Purchase</div>
+                        <div class="detail-price-val" th:text="${product.forSale ? '$' + product.price : 'N/A'}">$0.00</div>
+                    </div>
+                    
+                    <div class="detail-price-divider"></div>
+                    
+                    <div class="detail-price-col" th:style="${product.forRent ? '' : 'opacity: 0.4;'}">
+                        <div class="detail-price-label">Daily Rental</div>
+                        <div class="detail-price-val" style="color: var(--accent-cyan);" th:text="${product.forRent ? '$' + product.rentalPricePerDay : 'N/A'}">$0.00</div>
+                    </div>
+                </div>
+
+                <!-- Call to Actions -->
+                <div th:if="${isOwner}" style="background-color: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: var(--radius-md); padding: 1.25rem; color: var(--text-primary); text-align: center; margin-bottom: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                    <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--accent-indigo);">storefront</span>
+                    <div style="font-weight: 700;">You listed this instrument</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">As the owner of this listing, you cannot purchase or rent your own gear. You can modify this listing from your My Listings panel in your profile.</div>
+                </div>
+
+                <div class="detail-actions" th:if="${!isOwner}">
+                    <!-- Buy triggers -->
+                    <button class="btn btn-primary" th:if="${product.forSale && product.stockQuantity > 0}" th:onclick="addToCart([[${product.id}]])">
+                        <span class="material-symbols-outlined">shopping_cart</span> Add to Cart
+                    </button>
+                    
+                    <!-- Rent triggers -->
+                    <a th:href="@{/rental/book/{id}(id=${product.id})}" class="btn btn-secondary" th:if="${product.forRent && product.stockQuantity > 0}" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">
+                        <span class="material-symbols-outlined">calendar_today</span> Rent Instrument
+                    </a>
+
+                    <!-- Out of stock fallback -->
+                    <button class="btn btn-secondary" style="opacity: 0.5; cursor: not-allowed; width: 100%;" th:if="${product.stockQuantity == 0}" disabled>
+                        Temporarily Out of Stock
+                    </button>
+                </div>
+
+                <!-- Specifications Table -->
+                <div th:if="${product.specifications != null && !product.specifications.isEmpty()}">
+                    <h3 class="spec-title">Product Specifications</h3>
+                    <table class="spec-table">
+                        <tr th:each="spec : ${product.specifications}">
+                            <td class="spec-label" th:text="${spec.key}">Spec Key</td>
+                            <td class="spec-value" th:text="${spec.value}">Spec Value</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

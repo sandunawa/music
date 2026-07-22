@@ -1,0 +1,10 @@
+[ {
+  "enabled" : true,
+  "badgeText" : "\uD83C\uDF81 SPECIAL WELCOME OFFER",
+  "title" : "Get 15% OFF + Free Delivery!",
+  "subtitle" : "Welcome to MelodyMart — Your destination for premium instruments & rentals.",
+  "couponCode" : "MELODY15",
+  "imageUrl" : "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600",
+  "buttonText" : "Explore Products & Rent Now",
+  "buttonLink" : "/catalog/buy"
+} ]

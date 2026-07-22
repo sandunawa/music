@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80">
+  <rect width="240" height="80" rx="12" fill="#ffffff"/>
+  <rect x="25" y="24" width="32" height="32" rx="4" fill="#ea580c"/>
+  <path d="M33 32H49M33 40H49M33 48H49" stroke="#ffffff" stroke-width="4"/>
+  <text x="72" y="50" font-family="'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="30" letter-spacing="3" fill="#0f172a">Roland</text>
+</svg>

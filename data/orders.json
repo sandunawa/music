@@ -1,0 +1,20 @@
+[ {
+  "id" : "o-ad80a7dd",
+  "userId" : "u-admin",
+  "customerName" : "Alex Mercer (Admin)",
+  "customerEmail" : "admin@melodymart.com",
+  "shippingAddress" : "MelodyMart Corporate HQ, Boston, MA",
+  "phoneNumber" : "+1 (555) 019-2831",
+  "items" : [ {
+    "productId" : "p-f2ca5573",
+    "productName" : "piano",
+    "quantity" : 3,
+    "price" : 20.0,
+    "subtotal" : 60.0
+  } ],
+  "totalAmount" : 60.0,
+  "paymentStatus" : "PAID",
+  "orderStatus" : "SHIPPED",
+  "orderDate" : "2026-07-22T22:44:50.8500399",
+  "paymentMethod" : "Visa Credit Card"
+} ]

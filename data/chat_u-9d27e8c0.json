@@ -1,0 +1,17 @@
+[ {
+  "id" : "594d0048-96a3-4238-a794-88a57c8127a0",
+  "userId" : "u-9d27e8c0",
+  "userName" : "awasandun",
+  "content" : "hi",
+  "timestamp" : "2026-07-23T02:38:12.2882405",
+  "fromAdmin" : false,
+  "readByAdmin" : true
+}, {
+  "id" : "2f444738-5fb4-4ee7-b318-d49a59fc9c81",
+  "userId" : "u-9d27e8c0",
+  "userName" : "awasandun",
+  "content" : "welcom",
+  "timestamp" : "2026-07-23T02:38:31.7907526",
+  "fromAdmin" : true,
+  "readByAdmin" : true
+} ]
