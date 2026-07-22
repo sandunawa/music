@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head('MelodyMart Admin | Live Chat')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div class="section-header">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <h1 class="section-title">Live Chat Support</h1>
+                <span id="totalUnreadBadge" style="display:none; background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; font-size:0.75rem; font-weight:800; padding:0.2rem 0.6rem; border-radius:50px; line-height:1;">0</span>
+            </div>
+            <span style="font-size:0.9rem; color:var(--text-secondary);">Real-time customer messages</span>
+        </div>
+
+        <div class="chat-admin-layout">
+
+            <!-- ── LEFT: Conversations List ── -->
+            <div class="chat-sidebar-panel">
+                <div class="chat-sidebar-header">
+                    <span class="material-symbols-outlined" style="font-size:1.2rem; color:#4f46e5;">forum</span>
+                    <span>Conversations</span>
+                </div>
+                <div id="conversationsList" class="conversations-list">
+                    <div class="chat-empty-state" id="noConversations">
+                        <span class="material-symbols-outlined">chat_bubble_outline</span>
+                        <p>No customer messages yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RIGHT: Active Chat Window ── -->
+            <div class="chat-main-panel">
+                <!-- Placeholder when no chat selected -->
+                <div id="chatPlaceholder" class="chat-placeholder-state">
+                    <span class="material-symbols-outlined" style="font-size:4rem; color:#94a3b8;">mark_chat_unread</span>
+                    <h3>Select a conversation</h3>
+                    <p>Choose a customer from the list to view and reply to their messages.</p>
+                </div>
+
+                <!-- Active chat -->
+                <div id="activeChatWindow" style="display:none; flex-direction:column; height:100%;">
+                    <!-- Header -->
+                    <div class="chat-window-header">
+                        <div style="display:flex; align-items:center; gap:0.75rem;">
+                            <div id="chatUserAvatar" class="chat-avatar-lg">?</div>
+                            <div>
+                                <div id="chatUserName" style="font-weight:700; color:#0f172a; font-size:1rem;">User</div>
+                                <div style="font-size:0.78rem; color:#10b981; display:flex; align-items:center; gap:0.3rem;">
+                                    <span style="width:7px; height:7px; border-radius:50%; background:#10b981; display:inline-block;"></span>
+                                    Active Customer
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="refreshMessages()" class="btn btn-secondary" style="font-size:0.8rem; padding:0.35rem 0.85rem; border-radius:50px; display:flex; align-items:center; gap:0.3rem;">
+                            <span class="material-symbols-outlined" style="font-size:1rem;">refresh</span> Refresh
+                        </button>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div id="adminMessagesArea" class="chat-messages-area"></div>
+
+                    <!-- Reply Input -->
+                    <div class="chat-reply-area">
+                        <div class="chat-reply-input-wrap">
+                            <textarea id="adminReplyInput" class="chat-reply-textarea"
+                                      placeholder="Type your reply to the customer..."
+                                      onkeydown="handleAdminEnter(event)"></textarea>
+                            <button onclick="sendAdminReply()" class="chat-reply-send-btn" id="adminSendBtn">
+                                <span class="material-symbols-outlined">send</span>
+                            </button>
+                        </div>
+                        <p style="font-size:0.72rem; color:#94a3b8; margin-top:0.4rem;">Press <kbd>Ctrl+Enter</kbd> to send</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+
+    <style>
+        .chat-admin-layout{display:grid;grid-template-columns:320px 1fr;gap:1.5rem;height:calc(100vh - 220px);min-height:500px;}
+        .chat-sidebar-panel{background:#fff;border:1px solid #e2e8f0;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+        .chat-sidebar-header{display:flex;align-items:center;gap:0.6rem;padding:1.1rem 1.25rem;font-weight:700;font-size:0.9rem;color:#0f172a;border-bottom:1px solid #f1f5f9;background:#f8fafc;}
+        .conversations-list{overflow-y:auto;flex:1;}
+        .conversation-item{display:flex;align-items:center;gap:0.9rem;padding:1rem 1.25rem;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .15s;position:relative;}
+        .conversation-item:hover{background:#f8fafc;}
+        .conversation-item.active{background:#eef2ff;border-left:3px solid #4f46e5;}
+        .conv-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;flex-shrink:0;}
+        .conv-info{flex:1;min-width:0;}
+        .conv-name{font-size:0.88rem;font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .conv-preview{font-size:0.78rem;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:0.15rem;}
+        .conv-unread-badge{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;font-size:0.68rem;font-weight:800;padding:0.15rem 0.5rem;border-radius:50px;flex-shrink:0;}
+        .chat-main-panel{background:#fff;border:1px solid #e2e8f0;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+        .chat-placeholder-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:1rem;color:#94a3b8;text-align:center;padding:2rem;}
+        .chat-placeholder-state h3{font-size:1.1rem;font-weight:700;color:#64748b;margin:0;}
+        .chat-placeholder-state p{font-size:0.85rem;margin:0;}
+        .chat-window-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid #f1f5f9;background:#f8fafc;}
+        .chat-avatar-lg{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;flex-shrink:0;}
+        .chat-messages-area{flex:1;overflow-y:auto;padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:0.75rem;background:#fafbff;}
+        .chat-bubble{max-width:65%;padding:0.65rem 1rem;border-radius:18px;font-size:0.9rem;line-height:1.5;word-wrap:break-word;}
+        .chat-bubble.from-user{background:#fff;border:1px solid #e2e8f0;color:#1e293b;align-self:flex-start;border-bottom-left-radius:4px;}
+        .chat-bubble.from-admin{background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+        .bubble-meta{font-size:0.68rem;color:#94a3b8;margin-top:0.25rem;}
+        .from-admin .bubble-meta{color:rgba(255,255,255,.65);text-align:right;}
+        .bubble-wrapper{display:flex;flex-direction:column;}
+        .bubble-wrapper.admin-wrap{align-items:flex-end;}
+        .chat-reply-area{padding:1rem 1.5rem;border-top:1px solid #f1f5f9;background:#fff;}
+        .chat-reply-input-wrap{display:flex;gap:0.75rem;align-items:flex-end;}
+        .chat-reply-textarea{flex:1;padding:0.75rem 1rem;border:1px solid #e2e8f0;border-radius:14px;font-size:0.9rem;font-family:inherit;resize:none;min-height:52px;max-height:140px;outline:none;transition:border-color .2s;}
+        .chat-reply-textarea:focus{border-color:#4f46e5;box-shadow:0 0 0 3px rgba(79,70,229,.1);}
+        .chat-reply-send-btn{width:48px;height:48px;background:linear-gradient(135deg,#4f46e5,#0891b2);color:#fff;border:none;border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s,box-shadow .2s;flex-shrink:0;}
+        .chat-reply-send-btn:hover{transform:scale(1.05);box-shadow:0 4px 12px rgba(79,70,229,.4);}
+        .chat-empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;gap:0.5rem;color:#94a3b8;text-align:center;}
+        .chat-empty-state .material-symbols-outlined{font-size:2.5rem;}
+        .chat-empty-state p{font-size:0.85rem;margin:0;}
+        @media(max-width:768px){.chat-admin-layout{grid-template-columns:1fr;height:auto;}}
+    </style>
+
+    <script>
+        var activeUserId = null;
+        var activeUserName = null;
+        var pollTimer = null;
+
+        // ── Load conversations list ──
+        function loadConversations() {
+            fetch('/chat/admin/conversations')
+                .then(r => r.json())
+                .then(convs => {
+                    var list = document.getElementById('conversationsList');
+                    var noConv = document.getElementById('noConversations');
+                    var totalUnread = convs.reduce((s, c) => s + c.unreadCount, 0);
+
+                    var badge = document.getElementById('totalUnreadBadge');
+                    if (totalUnread > 0) {
+                        badge.style.display = 'inline';
+                        badge.textContent = totalUnread;
+                    } else {
+                        badge.style.display = 'none';
+                    }
+
+                    // Remove existing items
+                    list.querySelectorAll('.conversation-item').forEach(el => el.remove());
+
+                    if (convs.length === 0) {
+                        noConv.style.display = 'flex';
+                        return;
+                    }
+                    noConv.style.display = 'none';
+
+                    convs.forEach(function(conv) {
+                        var initial = conv.userName.charAt(0).toUpperCase();
+                        var isActive = activeUserId === conv.userId;
+                        var item = document.createElement('div');
+                        item.className = 'conversation-item' + (isActive ? ' active' : '');
+                        item.innerHTML =
+                            '<div class="conv-avatar">' + initial + '</div>' +
+                            '<div class="conv-info">' +
+                              '<div class="conv-name">' + escHtml(conv.userName) + '</div>' +
+                              '<div class="conv-preview">' + escHtml(conv.lastMessage) + '</div>' +
+                            '</div>' +
+                            (conv.unreadCount > 0 ? '<span class="conv-unread-badge">' + conv.unreadCount + '</span>' : '');
+                        item.onclick = function() { openChat(conv.userId, conv.userName); };
+                        list.appendChild(item);
+                    });
+                }).catch(console.error);
+        }
+
+        // ── Open a specific user chat ──
+        function openChat(userId, userName) {
+            activeUserId = userId;
+            activeUserName = userName;
+
+            document.getElementById('chatPlaceholder').style.display = 'none';
+            var win = document.getElementById('activeChatWindow');
+            win.style.display = 'flex';
+
+            document.getElementById('chatUserName').textContent = userName;
+            document.getElementById('chatUserAvatar').textContent = userName.charAt(0).toUpperCase();
+
+            loadConversations(); // Refresh list to update active state
+            loadMessages();
+
+            // Start polling for this chat
+            if (pollTimer) clearInterval(pollTimer);
+            pollTimer = setInterval(loadMessages, 3000);
+        }
+
+        // ── Load messages for active user ──
+        function loadMessages() {
+            if (!activeUserId) return;
+            fetch('/chat/admin/messages/' + encodeURIComponent(activeUserId))
+                .then(r => r.json())
+                .then(msgs => {
+                    renderMessages(msgs);
+                    loadConversations(); // Refresh unread counts
+                }).catch(console.error);
+        }
+
+        function refreshMessages() {
+            loadMessages();
+        }
+
+        // ── Render messages into bubble UI ──
+        function renderMessages(msgs) {
+            var area = document.getElementById('adminMessagesArea');
+            var scrollAtBottom = area.scrollTop + area.clientHeight >= area.scrollHeight - 20;
+            area.innerHTML = '';
+            if (msgs.length === 0) {
+                area.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:2rem;font-size:0.88rem;">No messages yet in this conversation.</div>';
+                return;
+            }
+            msgs.forEach(function(msg) {
+                var isAdmin = msg.fromAdmin;
+                var time = formatTime(msg.timestamp);
+                var wrapper = document.createElement('div');
+                wrapper.className = 'bubble-wrapper' + (isAdmin ? ' admin-wrap' : '');
+                wrapper.innerHTML =
+                    '<div class="chat-bubble ' + (isAdmin ? 'from-admin' : 'from-user') + '">' +
+                      escHtml(msg.content) +
+                      '<div class="bubble-meta">' + (isAdmin ? 'You (Admin)' : escHtml(msg.userName)) + ' · ' + time + '</div>' +
+                    '</div>';
+                area.appendChild(wrapper);
+            });
+            if (scrollAtBottom) area.scrollTop = area.scrollHeight;
+        }
+
+        // ── Admin send reply ──
+        function sendAdminReply() {
+            if (!activeUserId) return;
+            var input = document.getElementById('adminReplyInput');
+            var content = input.value.trim();
+            if (!content) return;
+
+            var btn = document.getElementById('adminSendBtn');
+            btn.disabled = true;
+
+            var body = new URLSearchParams();
+            body.append('userId', activeUserId);
+            body.append('content', content);
+
+            fetch('/chat/admin/reply', { method: 'POST', body: body })
+                .then(r => r.json())
+                .then(function() {
+                    input.value = '';
+                    loadMessages();
+                })
+                .catch(console.error)
+                .finally(() => { btn.disabled = false; });
+        }
+
+        function handleAdminEnter(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                sendAdminReply();
+            }
+        }
+
+        // ── Helpers ──
+        function escHtml(str) {
+            var d = document.createElement('div');
+            d.appendChild(document.createTextNode(str || ''));
+            return d.innerHTML;
+        }
+
+        function formatTime(ts) {
+            if (!ts) return '';
+            var d = new Date(ts);
+            return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        }
+
+        // Init
+        loadConversations();
+        setInterval(loadConversations, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head('MelodyMart | Sign In')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div class="form-panel-wrapper">
+            <div class="form-panel">
+                <div class="form-header">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--accent-cyan);">lock</span>
+                    <h2 class="form-title">Welcome Back</h2>
+                    <p class="form-subtitle">Log in to manage orders, rentals, and settings</p>
+                </div>
+
+                <!-- Error notifications -->
+                <div class="form-alert" th:if="${error != null}" th:text="${error}">
+                    Invalid login credentials.
+                </div>
+
+                <!-- Success notification from registering -->
+                <div class="form-alert-success" th:if="${param.registered != null}">
+                    Account created successfully! Please sign in.
+                </div>
+                
+                <div class="form-alert" th:if="${param.unauthorized != null}">
+                    Please login to proceed.
+                </div>
+
+                <form th:action="@{/login}" method="post">
+                    <!-- Carry redirect param if it exists -->
+                    <input type="hidden" name="redirect" th:value="${redirect}">
+
+                    <div class="form-group">
+                        <label class="filter-label" for="email">Email Address</label>
+                        <input type="email" id="email" name="email" th:value="${email}" placeholder="name@domain.com" class="form-control" required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-sm); margin-top: 1.5rem; padding: 0.75rem;">
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    Don't have an account? <a th:href="@{/register}">Create account</a>
+                    <br><br>
+                    <p style="font-size: 0.75rem; color: var(--text-muted);">
+                        Demo Accounts:<br>
+                        Admin: <code>admin@melodymart.com</code> / <code>admin123</code><br>
+                        Customer: <code>customer@melodymart.com</code> / <code>customer123</code>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

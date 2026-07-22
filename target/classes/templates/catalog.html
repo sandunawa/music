@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head(${isBuyPage ? 'Buy Instruments' : 'Rent Instruments'} + ' | MelodyMart')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div class="section-header">
+            <h1 class="section-title" th:text="${isBuyPage ? 'Buy Musical Instruments' : 'Rent Musical Instruments'}">Store Catalog</h1>
+            <span th:text="${products.size()} + ' instruments found'" style="color: var(--text-secondary); font-size: 0.95rem;">0 found</span>
+        </div>
+
+        <div class="catalog-layout">
+            <!-- Sidebar Filters -->
+            <aside class="filter-card">
+                <form th:action="${isBuyPage ? '/catalog/buy' : '/catalog/rent'}" method="get" id="filter-form">
+                    <h3 class="filter-title">Filters</h3>
+
+                    <!-- Keyword Search -->
+                    <div class="filter-group">
+                        <label class="filter-label" for="search-input">Search Keywords</label>
+                        <input type="text" id="search-input" name="query" th:value="${selectedQuery}" placeholder="e.g. Stratocaster, Yamaha..." class="form-control">
+                    </div>
+
+                    <!-- Category Dropdown -->
+                    <div class="filter-group">
+                        <label class="filter-label" for="category-select">Category</label>
+                        <select id="category-select" name="category" class="form-control">
+                            <option value="">-- All Categories --</option>
+                            <option th:each="cat : ${categories}" 
+                                    th:value="${cat}" 
+                                    th:text="${cat.displayName}"
+                                    th:selected="${cat == selectedCategory}">Category Name</option>
+                        </select>
+                    </div>
+
+                    <!-- Price Filters (Label dynamically shifts based on page type) -->
+                    <div class="filter-group">
+                        <label class="filter-label" th:text="${isBuyPage ? 'Price Range ($)' : 'Daily Rate Range ($)'}">Price Range ($)</label>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="number" name="minPrice" th:value="${selectedMinPrice}" placeholder="Min" class="form-control" style="padding: 0.4rem;" min="0">
+                            <span style="color: var(--text-muted);">-</span>
+                            <input type="number" name="maxPrice" th:value="${selectedMaxPrice}" placeholder="Max" class="form-control" style="padding: 0.4rem;" min="0">
+                        </div>
+                    </div>
+
+                    <!-- Stock Checkbox -->
+                    <div class="filter-group">
+                        <label class="filter-checkbox-label">
+                            <input type="checkbox" name="inStockOnly" th:checked="${selectedInStockOnly}" value="true">
+                            <span>Show In-Stock Only</span>
+                        </label>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-sm); padding: 0.6rem;">
+                            <span class="material-symbols-outlined" style="font-size: 1.1rem;">filter_alt</span> Apply Filters
+                        </button>
+                        <a th:href="${isBuyPage ? '/catalog/buy' : '/catalog/rent'}" class="btn btn-secondary" style="width: 100%; border-radius: var(--radius-sm); padding: 0.6rem; text-align: center;">
+                            Clear Filters
+                        </a>
+                    </div>
+                </form>
+            </aside>
+
+            <!-- Catalog Listings -->
+            <section>
+                <!-- Empty State -->
+                <div class="empty-state" th:if="${products.isEmpty()}">
+                    <span class="material-symbols-outlined empty-icon">sentiment_dissatisfied</span>
+                    <h3>No Instruments Match Your Search</h3>
+                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Try adjusting your keyword filter queries or clear the price thresholds.</p>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="product-grid" th:if="${!products.isEmpty()}">
+                    <div class="product-card" th:each="product : ${products}">
+                        <div class="product-img-wrapper">
+                            <img th:src="${product.imageUrl}" th:alt="${product.name}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600'">
+                            <span class="product-badge" th:if="${product.stockQuantity > 0}" th:text="'Stock: ' + ${product.stockQuantity}">In Stock</span>
+                            <span class="product-badge out" th:if="${product.stockQuantity == 0}">Out of Stock</span>
+                        </div>
+                        <div class="product-info">
+                            <span class="product-brand" th:text="${product.brand}">Brand</span>
+                            <a th:href="@{/product/{id}(id=${product.id})}" class="product-title" th:text="${product.name}">Instrument Title</a>
+                            
+                            <!-- Display listed owner -->
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.25rem;">
+                                <span class="material-symbols-outlined" style="font-size: 0.9rem;">storefront</span>
+                                Listed by: <span th:text="${product.ownerName}" style="font-weight: 600;">Owner</span>
+                            </div>
+
+                            <p class="product-desc" th:text="${product.description}">Short summary description of the gear.</p>
+                            
+                            <div class="product-prices">
+                                <!-- Buying view prices -->
+                                <div class="price-item" th:if="${isBuyPage}">
+                                    <span class="price-label">Retail Price</span>
+                                    <span class="price-value" th:text="'$' + ${product.price}">$0.00</span>
+                                </div>
+                                <!-- Renting view prices -->
+                                <div class="price-item" th:if="${isRentPage}">
+                                    <span class="price-label">Rental Rate</span>
+                                    <span class="price-value rental" th:text="'$' + ${product.rentalPricePerDay} + ' / day'">$0.00 / day</span>
+                                </div>
+                            </div>
+
+                            <div class="card-actions">
+                                <a th:href="@{/product/{id}(id=${product.id})}" class="btn btn-secondary btn-card">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">info</span> Specs
+                                </a>
+                                
+                                <!-- Buy triggers -->
+                                <button class="btn btn-primary btn-card" 
+                                        th:if="${isBuyPage && product.stockQuantity > 0}"
+                                        th:onclick="addToCart([[${product.id}]])">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">add_shopping_cart</span> Add to Cart
+                                </button>
+                                
+                                <!-- Rent triggers -->
+                                <a th:href="@{/rental/book/{id}(id=${product.id})}" 
+                                   class="btn btn-primary btn-card" 
+                                   th:if="${isRentPage && product.stockQuantity > 0}" 
+                                   style="background: var(--accent-gradient);">
+                                    <span class="material-symbols-outlined" style="font-size: 1rem;">calendar_today</span> Rent Now
+                                </a>
+                                
+                                <button class="btn btn-secondary btn-card" style="opacity: 0.5; cursor: not-allowed;" th:if="${product.stockQuantity == 0}" disabled>
+                                    Out of Stock
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

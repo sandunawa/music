@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head('MelodyMart | Error')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div class="empty-state" style="max-width: 600px; margin: 3rem auto; padding: 3rem 2rem;">
+            <span class="material-symbols-outlined empty-icon" style="color: var(--color-danger); font-size: 4rem;">warning</span>
+            <h2 style="font-size: 1.8rem; font-weight: 800; margin-top: 1rem;">An Error Occurred</h2>
+            
+            <p style="color: var(--text-secondary); margin: 1rem 0 2rem 0; font-size: 1.05rem;" 
+               th:text="${message != null ? message : (param.message != null ? param.message : 'The page you requested could not be loaded or access was restricted.')}">
+                Error details go here.
+            </p>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a th:href="@{/}" class="btn btn-primary">
+                    <span class="material-symbols-outlined">home</span> Go Home
+                </a>
+                <a th:href="@{/catalog}" class="btn btn-secondary">
+                    <span class="material-symbols-outlined">explore</span> Explore Catalog
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

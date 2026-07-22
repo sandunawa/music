@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Shipping Label - ' + ${order.id}">Shipping Label</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Libre+Barcode+128&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --dark: #0f172a;
+            --border: #cbd5e1;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background: #f1f5f9; padding: 2rem; color: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        
+        .action-bar { margin-bottom: 1.5rem; display: flex; gap: 1rem; }
+        .btn-print { background: #4f46e5; color: #fff; border: none; padding: 0.75rem 1.75rem; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 14px rgba(79,70,229,0.3); transition: transform 0.2s; }
+        .btn-print:hover { transform: translateY(-2px); background: #4338ca; }
+        .btn-close { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 600; font-size: 0.95rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+
+        /* Parcel Label Card (Standard 4x6 / A5 Proportion) */
+        .label-card {
+            width: 520px;
+            background: #ffffff;
+            border: 3px solid #0f172a;
+            border-radius: 12px;
+            padding: 1.75rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .label-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #0f172a;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .brand-title { font-weight: 900; font-size: 1.4rem; letter-spacing: -0.5px; color: #0f172a; display: flex; align-items: center; gap: 0.4rem; }
+        .badge-express { background: #0f172a; color: #ffffff; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px; }
+
+        .barcode-section {
+            text-align: center;
+            padding: 0.75rem 0;
+            border-bottom: 2px dashed #94a3b8;
+            margin-bottom: 1rem;
+        }
+        .barcode-text { font-family: 'Libre Barcode 128', cursive; font-size: 3.2rem; line-height: 1; letter-spacing: 2px; }
+        .tracking-id { font-size: 0.85rem; font-weight: 800; letter-spacing: 2px; color: #475569; }
+
+        .addresses-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            border-bottom: 3px solid #0f172a;
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .address-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .address-box.ship-to {
+            border-color: #0f172a;
+            background: #f1f5f9;
+        }
+        .box-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+        .recipient-name { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem; }
+        .recipient-phone { font-size: 0.95rem; font-weight: 700; color: #4f46e5; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.3rem; }
+        .recipient-address { font-size: 0.95rem; color: #334155; line-height: 1.4; font-weight: 500; }
+
+        .items-summary {
+            margin-bottom: 1rem;
+        }
+        .item-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .item-row:last-child { border-bottom: none; }
+        .item-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            flex-shrink: 0;
+        }
+        .item-details { flex: 1; }
+        .item-name { font-size: 0.95rem; font-weight: 700; color: #0f172a; }
+        .item-qty { font-size: 0.8rem; font-weight: 600; color: #64748b; margin-top: 0.25rem; }
+
+        .label-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #64748b;
+            border-top: 2px solid #0f172a;
+            padding-top: 0.75rem;
+            font-weight: 600;
+        }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .action-bar { display: none !important; }
+            .label-card { box-shadow: none; border-width: 2px; width: 100%; max-width: 600px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="action-bar">
+        <button class="btn-print" onclick="window.print()">
+            <span class="material-symbols-outlined">download</span> Download / Print PDF Label
+        </button>
+        <a href="javascript:window.close()" class="btn-close">
+            <span class="material-symbols-outlined">close</span> Close
+        </a>
+    </div>
+
+    <div class="label-card">
+        <!-- Header -->
+        <div class="label-header">
+            <div class="brand-title">
+                <span class="material-symbols-outlined" style="color:#4f46e5;font-size:1.6rem;">local_shipping</span>
+                MelodyMart Dispatch
+            </div>
+            <span class="badge-express">PRIORITY PARCEL</span>
+        </div>
+
+        <!-- Barcode Section -->
+        <div class="barcode-section">
+            <div class="barcode-text" th:text="${order.id}">*ORDER-12345*</div>
+            <div class="tracking-id" th:text="'TRACKING #: ' + ${order.id}">TRACKING #: O-12345</div>
+        </div>
+
+        <!-- Addresses -->
+        <div class="addresses-grid">
+            <!-- RECIPIENT (SHIP TO) -->
+            <div class="address-box ship-to">
+                <div class="box-title">
+                    <span class="material-symbols-outlined" style="font-size:1rem;color:#0f172a;">pin_drop</span>
+                    DELIVER TO (RECIPIENT)
+                </div>
+                <div class="recipient-name" th:text="${order.customerName}">Recipient Name</div>
+                <div class="recipient-phone">
+                    <span class="material-symbols-outlined" style="font-size:1rem;">call</span>
+                    <span th:text="${order.phoneNumber}">+94 77 123 4567</span>
+                </div>
+                <div class="recipient-address" th:text="${order.shippingAddress}">Shipping Address Details</div>
+            </div>
+
+            <!-- SENDER (SHIP FROM) -->
+            <div class="address-box">
+                <div class="box-title">
+                    <span class="material-symbols-outlined" style="font-size:1rem;color:#64748b;">storefront</span>
+                    SHIP FROM (SELLER / DISPATCH HUB)
+                </div>
+                <div style="font-weight: 700; font-size: 0.95rem; color: #0f172a;" th:text="${currentUser.name}">Seller Name</div>
+                <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.2rem;">MelodyMart Authorized Seller Hub</div>
+            </div>
+        </div>
+
+        <!-- Instrument Contents & Image -->
+        <div class="items-summary">
+            <div class="box-title" style="margin-bottom: 0.5rem;">
+                <span class="material-symbols-outlined" style="font-size:1rem;color:#4f46e5;">inventory_2</span>
+                PARCEL CONTENTS &amp; INSTRUMENT DETAILS
+            </div>
+
+            <div class="item-row" th:each="item : ${order.items}">
+                <img th:if="${productsMap.containsKey(item.productId)}" 
+                     th:src="${productsMap.get(item.productId).imageUrl}" 
+                     th:alt="${item.productName}" 
+                     class="item-img"
+                     onerror="this.src='https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'">
+                
+                <div class="item-details">
+                    <div class="item-name" th:text="${item.productName}">Instrument Title</div>
+                    <div class="item-qty">
+                        Quantity: <strong th:text="${item.quantity}">1</strong> | Subtotal: <strong style="color:#0f172a;" th:text="'$' + ${item.getSubtotal()}">$0.00</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="label-footer">
+            <div>Date Printed: <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm')}">Date</span></div>
+            <div>MelodyMart Parcel Courier Label</div>
+        </div>
+    </div>
+
+</body>
+</html>

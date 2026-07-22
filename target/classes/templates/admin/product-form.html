@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head(${isEdit ? 'Edit Instrument' : 'Add Instrument'} + ' | MelodyMart')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div style="margin-bottom: 2rem;">
+            <a th:href="@{/admin/inventory}" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: var(--radius-sm);">
+                <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_back</span> Return to Inventory
+            </a>
+        </div>
+
+        <div class="form-panel-wrapper" style="max-width: 700px;">
+            <div class="form-panel" style="padding: 2.5rem; border-radius: var(--radius-md);">
+                <div class="form-header" style="text-align: left; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                    <h2 class="form-title" th:text="${isEdit ? 'Modify Instrument Configuration' : 'Add New Musical Instrument'}">
+                        Product Form
+                    </h2>
+                    <p class="form-subtitle">Define price structures, descriptions, and dynamic item details</p>
+                </div>
+
+                <form th:action="@{/admin/inventory/save}" method="post">
+                    <!-- Carry ID if editing -->
+                    <input type="hidden" name="id" th:value="${product.id}">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="filter-label" for="name">Product Name</label>
+                            <input type="text" id="name" name="name" th:value="${product.name}" class="form-control" required placeholder="e.g. Fender Stratocaster">
+                        </div>
+                        <div class="form-group">
+                            <label class="filter-label" for="brand">Brand</label>
+                            <input type="text" id="brand" name="brand" th:value="${product.brand}" class="form-control" required placeholder="e.g. Fender">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="filter-label" for="category">Category</label>
+                            <select id="category" name="category" class="form-control" required>
+                                <option value="">-- Choose Category --</option>
+                                <option th:each="cat : ${categories}" 
+                                        th:value="${cat}" 
+                                        th:text="${cat.displayName}"
+                                        th:selected="${cat == product.category}">Category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="filter-label" for="stockQuantity">Stock Quantity</label>
+                            <input type="number" id="stockQuantity" name="stockQuantity" th:value="${product.stockQuantity}" class="form-control" required min="0" placeholder="e.g. 5">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="filter-label" for="price">Retail Purchase Price ($)</label>
+                            <input type="number" id="price" name="price" th:value="${product.price}" class="form-control" required min="0" step="0.01" placeholder="e.g. 799.99">
+                        </div>
+                        <div class="form-group">
+                            <label class="filter-label" for="rentalPricePerDay">Daily Rental Rate ($)</label>
+                            <input type="number" id="rentalPricePerDay" name="rentalPricePerDay" th:value="${product.rentalPricePerDay}" class="form-control" required min="0" step="0.01" placeholder="e.g. 15.00">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="imageUrl">Image URL</label>
+                        <input type="url" id="imageUrl" name="imageUrl" th:value="${product.imageUrl}" class="form-control" required placeholder="https://images.unsplash.com/photo-...">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="filter-label" for="description">Detailed Description</label>
+                        <textarea id="description" name="description" th:text="${product.description}" class="form-control" rows="4" required placeholder="Outline product design, tone options, and package details..." style="resize: vertical; font-family: inherit;"></textarea>
+                    </div>
+
+                    <!-- Specifications Builder -->
+                    <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--accent-cyan);">Specifications</h3>
+                            <button type="button" class="btn btn-secondary" onclick="addSpecRow()" style="font-size: 0.75rem; padding: 0.35rem 0.75rem; border-radius: var(--radius-sm);">
+                                <span class="material-symbols-outlined" style="font-size: 0.95rem;">add</span> Add Row
+                            </button>
+                        </div>
+
+                        <div id="specifications-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <!-- Seed current specifications on edit -->
+                            <div th:each="spec : ${product.specifications}" class="spec-builder-row">
+                                <input type="text" name="specKeys" th:value="${spec.key}" class="form-control" placeholder="e.g. Color" required>
+                                <input type="text" name="specValues" th:value="${spec.value}" class="form-control" placeholder="e.g. Sunburst" required>
+                                <button type="button" class="btn btn-secondary" onclick="this.parentElement.remove()" style="padding: 0.5rem 1rem;">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-sm); margin-top: 2.5rem; padding: 0.8rem; font-size: 1.05rem;">
+                        <span class="material-symbols-outlined" style="font-size: 1.1rem;">save</span> Save Product Configurations
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

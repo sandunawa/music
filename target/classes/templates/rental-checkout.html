@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: html_head('MelodyMart | Book Rental')}"></head>
+
+<body>
+    <header th:replace="~{layout :: header}"></header>
+
+    <main>
+        <div style="margin-bottom: 2rem;">
+            <a th:href="@{/product/{id}(id=${product.id})}" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: var(--radius-sm);">
+                <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_back</span> Return to Details
+            </a>
+        </div>
+
+        <div class="cart-layout">
+            <!-- Left Side: Date selection & simulated payment -->
+            <div>
+                <div class="form-panel" style="max-width: 100%; padding: 2rem; border-radius: var(--radius-md);">
+                    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                        Instrument Rental Booking
+                    </h2>
+
+                    <!-- Error alerts -->
+                    <div class="form-alert" th:if="${error != null}" th:text="${error}">
+                        Rental booking failed due to input errors.
+                    </div>
+
+                    <form th:action="@{/rental/book/{id}(id=${product.id})}" method="post">
+                        <!-- Date Selection Section -->
+                        <h3 style="font-size: 1.1rem; color: var(--accent-cyan); margin-bottom: 1rem;">1. Select Rental Duration</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="filter-label" for="startDate">Start Date</label>
+                                <input type="date" id="startDate" name="startDate" 
+                                       th:min="${minStartDate}" 
+                                       class="form-control" required
+                                       onchange="recalculateRentalCost()">
+                            </div>
+                            <div class="form-group">
+                                <label class="filter-label" for="endDate">End Date (Return Date)</label>
+                                <input type="date" id="endDate" name="endDate" 
+                                       th:min="${minEndDate}" 
+                                       class="form-control" required
+                                       onchange="recalculateRentalCost()">
+                            </div>
+                        </div>
+
+                        <!-- Payment Section -->
+                        <h3 style="font-size: 1.1rem; color: var(--accent-cyan); margin-top: 2rem; margin-bottom: 1rem;">2. Rental Security Payment Gateway</h3>
+                        
+                        <div class="form-group">
+                            <label class="filter-label" for="paymentMethod">Card Type</label>
+                            <select id="paymentMethod" name="paymentMethod" class="form-control" required>
+                                <option value="Visa Credit Card">Visa Credit Card</option>
+                                <option value="Mastercard Debit Card">Mastercard Debit Card</option>
+                                <option value="American Express">American Express Card</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="filter-label" for="cardNumber">Card Number</label>
+                            <input type="text" id="cardNumber" name="cardNumber" class="form-control" required placeholder="4111 2222 3333 4444" minlength="16" maxlength="19" oninput="formatCardNumber(this)">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="filter-label" for="cardExpiry">Expiration Date</label>
+                                <input type="text" id="cardExpiry" name="cardExpiry" class="form-control" required placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)">
+                            </div>
+                            <div class="form-group">
+                                <label class="filter-label" for="cardCvv">CVV Code</label>
+                                <input type="password" id="cardCvv" name="cardCvv" class="form-control" required placeholder="•••" minlength="3" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: var(--radius-sm); margin-top: 2rem; padding: 0.8rem; font-size: 1.05rem;">
+                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">lock</span> Authorize Rental Payment
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Side: Rented Product Summary -->
+            <div class="cart-summary">
+                <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                    Renting Gear
+                </h3>
+
+                <div style="text-align: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+                    <h4 th:text="${product.name}" style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary);">Instrument Title</h4>
+                    <span th:text="${product.brand}" style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 1px;">Brand</span>
+                </div>
+
+                <div class="summary-row">
+                    <span style="color: var(--text-secondary);">Daily Rental Rate</span>
+                    <span th:text="'$' + ${product.rentalPricePerDay} + ' / day'">$0.00 / day</span>
+                </div>
+
+                <div class="summary-row">
+                    <span style="color: var(--text-secondary);">Rental Period</span>
+                    <span id="rental-days-display">0 days</span>
+                </div>
+
+                <div class="summary-row total">
+                    <span>Subtotal</span>
+                    <span id="rental-cost-display" style="color: var(--accent-cyan);">$0.00</span>
+                </div>
+
+                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 1.5rem; line-height: 1.4;">
+                    * All instrument bookings require authorization of funds. Returned gear will be scanned back into inventory immediately.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer th:replace="~{layout :: footer}"></footer>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const dailyRate = /*[[${product.rentalPricePerDay}]]*/ 0.0;
+        /*]]>*/
+
+        function recalculateRentalCost() {
+            const startVal = document.getElementById('startDate').value;
+            const endVal = document.getElementById('endDate').value;
+            
+            const daysLabel = document.getElementById('rental-days-display');
+            const costLabel = document.getElementById('rental-cost-display');
+
+            if (!startVal || !endVal) {
+                daysLabel.innerText = '0 days';
+                costLabel.innerText = '$0.00';
+                return;
+            }
+
+            const start = new Date(startVal);
+            const end = new Date(endVal);
+
+            // Compute difference in days
+            const diffTime = end - start;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) {
+                daysLabel.innerText = 'Invalid range';
+                daysLabel.style.color = 'var(--color-danger)';
+                costLabel.innerText = '$0.00';
+                return;
+            }
+
+            daysLabel.style.color = 'var(--text-primary)';
+            daysLabel.innerText = diffDays + (diffDays === 1 ? ' day' : ' days');
+            
+            const cost = diffDays * dailyRate;
+            costLabel.innerText = '$' + cost.toFixed(2);
+        }
+
+        function formatCardNumber(input) {
+            let val = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let matches = val.match(/\d{4,16}/g);
+            let match = matches && matches[0] || '';
+            let parts = [];
+            for (let i=0, len=match.length; i<len; i+=4) {
+                parts.push(match.substring(i, i+4));
+            }
+            input.value = parts.length > 0 ? parts.join(' ') : val;
+        }
+
+        function formatExpiry(input) {
+            let val = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            if (val.length >= 2) {
+                input.value = val.substring(0, 2) + '/' + val.substring(2, 4);
+            } else {
+                input.value = val;
+            }
+        }
+    </script>
+</body>
+</html>
